@@ -55,7 +55,9 @@ open class LocationService : CLLocationManager, CLLocationManagerDelegate{
             startUpdatingLocation()
             allowsBackgroundLocationUpdates = true
             pausesLocationUpdatesAutomatically = false
+            #if os(iOS)
             showsBackgroundLocationIndicator = true
+            #endif
             startUpdatingHeading()
             running = true
         }
@@ -71,7 +73,9 @@ open class LocationService : CLLocationManager, CLLocationManagerDelegate{
         Log.info("LocationService stop")
         if running{
             stopUpdatingLocation()
+            #if os(iOS)
             stopUpdatingHeading()
+            #endif
             running = false
         }
     }
