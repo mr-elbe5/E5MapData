@@ -84,8 +84,8 @@ open class MapTile{
 
 public struct MapTileData{
     
-    var zoom: Int
-    var x: Int
-    var y: Int
+    public var zoom: Int
+    public var x: Int
+    public var y: Int
     
 }
