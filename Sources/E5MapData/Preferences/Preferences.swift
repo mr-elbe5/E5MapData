@@ -1,0 +1,102 @@
+/*
+ E5MapData
+ App for display and use of OSM maps without MapKit
+ Copyright: Michael Rönnau mr@elbe5.de
+ */
+
+import Foundation
+import E5Data
+
+open class Preferences: Identifiable, Codable{
+    
+    public static var storeKey = "preferences"
+    
+    public static var shared = Preferences()
+    
+    public static var elbe5Url = "https://maps.elbe5.de/carto/{z}/{x}/{y}.png"
+    public static var elbe5TopoUrl = "https://maps.elbe5.de/topo/{z}/{x}/{y}.png"
+    public static var osmUrl = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+    
+    public static var defaultTrackpointInterval: Double = 3
+    public static var defaultMaxHorizontalUncertainty: Double = 3
+    public static var defaultMaxSpeedUncertaintyFactor: Double = 2
+    
+    public static var defaultMinHorizontalTrackpointDistance: Double = 3
+    public static var defaultMinVerticalTrackpointDistance: Double = 1.5
+    
+    public static var defaultMaxTrackpointInLineDeviation: Double = 2.0
+    
+    public static var defaultMaxPlaceMergeDistance: Double = 10.0
+    
+    public static var defaultMaxSearchResults: Int = 5
+    
+    public static var defaultUseICloud = false
+    public static var defaultDeleteLocalDataOnDownload = false
+    public static var defaultDeleteICloudDataOnUpload = true
+    
+    enum CodingKeys: String, CodingKey {
+        case urlTemplate
+        case followTrack
+        case trackpointInterval
+        case maxHorizontalUncertainty
+        case maxSpeedUncertaintyFactor
+        case minHorizontalTrackpointDistance
+        case minVerticalTrackpointDistance
+        case maxTrackpointInLineDeviation
+        case maxSearchResults
+        case maxPlaceMergeDistance
+        case useICloud
+    }
+
+    public var urlTemplate : String = osmUrl
+    public var followTrack : Bool = false
+    public var showTrackpoints : Bool = false
+    
+    public var trackpointInterval: Double = defaultTrackpointInterval
+    public var maxHorizontalUncertainty: Double = defaultMaxHorizontalUncertainty
+    public var maxSpeedUncertaintyFactor: Double = defaultMaxSpeedUncertaintyFactor
+    public var minHorizontalTrackpointDistance = defaultMinHorizontalTrackpointDistance
+    public var minVerticalTrackpointDistance = defaultMinVerticalTrackpointDistance
+    public var maxTrackpointInLineDeviation = defaultMaxTrackpointInLineDeviation
+    public var maxSearchResults = defaultMaxSearchResults
+    public var maxPlaceMergeDistance: Double = defaultMaxPlaceMergeDistance
+    public var useICloud: Bool = defaultUseICloud
+    
+    public init(){
+    }
+
+    required public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        urlTemplate = try values.decodeIfPresent(String.self, forKey: .urlTemplate) ?? Preferences.osmUrl
+        followTrack = try values.decodeIfPresent(Bool.self, forKey: .followTrack) ?? false
+        trackpointInterval = try values.decodeIfPresent(Double.self, forKey: .trackpointInterval) ?? Preferences.defaultTrackpointInterval
+        maxHorizontalUncertainty = try values.decodeIfPresent(Double.self, forKey: .maxHorizontalUncertainty) ?? Preferences.defaultMaxHorizontalUncertainty
+        maxSpeedUncertaintyFactor = try values.decodeIfPresent(Double.self, forKey: .maxSpeedUncertaintyFactor) ?? Preferences.defaultMaxSpeedUncertaintyFactor
+        minHorizontalTrackpointDistance = try values.decodeIfPresent(Double.self, forKey: .minHorizontalTrackpointDistance) ?? Preferences.defaultMinHorizontalTrackpointDistance
+        minVerticalTrackpointDistance = try values.decodeIfPresent(Double.self, forKey: .minVerticalTrackpointDistance) ?? Preferences.defaultMinVerticalTrackpointDistance
+        maxTrackpointInLineDeviation = try values.decodeIfPresent(Double.self, forKey: .maxTrackpointInLineDeviation) ?? Preferences.defaultMaxTrackpointInLineDeviation
+        maxSearchResults = try values.decodeIfPresent(Int.self, forKey: .maxSearchResults) ?? Preferences.defaultMaxSearchResults
+        maxPlaceMergeDistance = try values.decodeIfPresent(Double.self, forKey: .maxPlaceMergeDistance) ?? Preferences.defaultMaxPlaceMergeDistance
+        useICloud = try values.decodeIfPresent(Bool.self, forKey: .useICloud) ?? Preferences.defaultUseICloud
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(urlTemplate, forKey: .urlTemplate)
+        try container.encode(followTrack, forKey: .followTrack)
+        try container.encode(maxHorizontalUncertainty, forKey: .maxHorizontalUncertainty)
+        try container.encode(maxSpeedUncertaintyFactor, forKey: .maxSpeedUncertaintyFactor)
+        try container.encode(minHorizontalTrackpointDistance, forKey: .minHorizontalTrackpointDistance)
+        try container.encode(minVerticalTrackpointDistance, forKey: .minVerticalTrackpointDistance)
+        try container.encode(maxTrackpointInLineDeviation, forKey: .maxTrackpointInLineDeviation)
+        try container.encode(maxSearchResults, forKey: .maxSearchResults)
+        try container.encode(maxPlaceMergeDistance, forKey: .maxPlaceMergeDistance)
+        try container.encode(useICloud, forKey: .useICloud)
+    }
+    
+    public func save(){
+        UserDefaults.standard.save(forKey: Preferences.storeKey, value: self)
+    }
+    
+}
+

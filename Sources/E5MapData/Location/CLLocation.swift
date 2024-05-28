@@ -1,6 +1,6 @@
 /*
  E5MapData
- Base classes and extension for IOS and MacOS
+ App for display and use of OSM maps without MapKit
  Copyright: Michael Rönnau mr@elbe5.de
  */
 
@@ -15,6 +15,14 @@ extension CLLocation{
     
     public var speedUncertaintyFactor: Double{
         speedAccuracy < 0 ? -1 : speedAccuracy / speed
+    }
+    
+    public var horizontalAccuracyValid : Bool{
+        horizontalAccuracy >= 0 && horizontalAccuracy <= Preferences.shared.maxHorizontalUncertainty
+    }
+    
+    public var speedAccuracyValid : Bool{
+        speedAccuracy >= 0 && speedUncertaintyFactor <= Preferences.shared.maxSpeedUncertaintyFactor
     }
     
 }

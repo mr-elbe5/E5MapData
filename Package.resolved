@@ -1,13 +1,31 @@
 {
-  "originHash" : "e46f99120e9d02f40bf3a9f2c6af68e34d88f1f23d97a08d67920704ce29250a",
+  "originHash" : "da0d37bd04a67986baa3803924414840caec4f7abbdacd57ebbf678c1a1bd853",
   "pins" : [
     {
       "identity" : "e5data",
       "kind" : "remoteSourceControl",
       "location" : "https://git.elbe5cloud.de/miro/E5Data",
       "state" : {
-        "revision" : "ea473683898718ee2ba8e1a4b250e6a1739b31e3",
+        "revision" : "a1f38e18a1ec9794129b062ea3c3849f902dfae7",
+        "version" : "1.0.9"
+      }
+    },
+    {
+      "identity" : "e5photolib",
+      "kind" : "remoteSourceControl",
+      "location" : "https://git.elbe5cloud.de/miro/E5PhotoLib",
+      "state" : {
+        "revision" : "d568867b6be2bdc5460b809aa62468203b3bc5ec",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "zip",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/marmelroy/Zip",
+      "state" : {
+        "revision" : "67fa55813b9e7b3b9acee9c0ae501def28746d76",
+        "version" : "2.1.2"
       }
     }
   ],
