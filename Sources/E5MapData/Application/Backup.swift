@@ -23,6 +23,10 @@ open class Backup{
             if let url = AppData.shared.saveAsFile(){
                 paths.append(url)
             }
+            else{
+                Log.error("could not create zip file: could not save json")
+                return nil
+            }
             try Zip.zipFiles(paths: paths, zipFilePath: zipFileURL, password: nil, progress: { (progress) -> () in
                 //Log.debug(progress)
             })
