@@ -8,7 +8,7 @@ import CoreLocation
 
 extension CGRect{
     
-    public var center: CGPoint{
+    public var centerInWorld: CGPoint{
         var cx = origin.x + size.width/2
         if cx > World.worldSize.width{
             cx -= World.worldSize.width
@@ -21,7 +21,7 @@ extension CGRect{
     }
     
     public var bottomRightCoordinate : CLLocationCoordinate2D{
-        if spans180Medidian, let rect = remainderRect{
+        if spans180Medidian, let rect = medianRemainderRect{
             return rect.bottomRightCoordinate
         }
         return CGPoint(x: origin.x + size.width, y: origin.y + size.height).coordinate
@@ -35,7 +35,7 @@ extension CGRect{
         origin.x + size.width > World.worldSize.width
     }
     
-    public var remainderRect : CGRect?{
+    public var medianRemainderRect : CGRect?{
         if !spans180Medidian{
             return nil
         }
