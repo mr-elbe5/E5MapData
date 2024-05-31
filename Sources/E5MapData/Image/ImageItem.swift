@@ -13,6 +13,10 @@ import E5Data
 
 open class ImageItem : FileItem{
     
+    public enum CodingKeys: String, CodingKey {
+        case metaData
+    }
+    
     override public var type : PlaceItemType{
         .image
     }
@@ -22,8 +26,22 @@ open class ImageItem : FileItem{
         fileName = "img_\(id).jpg"
     }
     
+    public var metaData: ImageMetaData? = nil
+    
     required public init(from decoder: Decoder) throws {
         try super.init(from: decoder)
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        metaData = try values.decodeIfPresent(ImageMetaData.self, forKey: .metaData)
+    }
+    
+    override public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(metaData, forKey: .metaData)
+        try super.encode(to: encoder)
+    }
+    
+    public func readMetaData(){
+        metaData = ImageMetaData(url: fileURL)
     }
     
 #if os(macOS)
