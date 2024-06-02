@@ -41,7 +41,10 @@ open class ImageItem : FileItem{
     }
     
     public func readMetaData(){
-        metaData = ImageMetaData(url: fileURL)
+        if let data = FileManager.default.readFile(url: fileURL){
+            metaData = ImageMetaData()
+            metaData?.readData(data: data)
+        }
     }
     
 #if os(macOS)

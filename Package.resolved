@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://git.elbe5cloud.de/miro/E5Data",
       "state" : {
-        "revision" : "0e89bf2bd86fb32bc03ca99a25ae8dae0eff5d81",
-        "version" : "1.0.16"
+        "revision" : "f4dcbac26bdea9f6273c1feae7b3c0e9245a9d9c",
+        "version" : "1.0.23"
       }
     },
     {
