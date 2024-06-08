@@ -135,7 +135,7 @@ open class Place : UUIDObject, Comparable{
         mapPoint = CGPoint(coordinate)
         self.coordinate = coordinate
         altitude = 0
-        creationDate = Date()
+        creationDate = Date.localDate
         super.init()
         evaluatePlacemark()
     }

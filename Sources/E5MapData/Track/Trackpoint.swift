@@ -53,7 +53,7 @@ open class Trackpoint: Codable, Identifiable{
         mapPoint = CGPoint(location.coordinate)
         coordinate = location.coordinate
         altitude = location.altitude
-        timestamp = location.timestamp
+        timestamp = location.timestamp.toLocalDate()
         horizontalAccuracy = location.horizontalAccuracy
         speed = location.speed
         speedAccuracy = location.speedAccuracy
