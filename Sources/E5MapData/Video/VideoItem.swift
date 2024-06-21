@@ -41,9 +41,6 @@ open class VideoItem : FileItem{
     
 }
 
-public protocol VideoDelegate{
-    func viewVideoItem(item: VideoItem)
-}
 
 
 

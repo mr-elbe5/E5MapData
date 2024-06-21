@@ -245,8 +245,3 @@ open class Place : UUIDObject, Comparable{
     
 }
 
-public protocol PlaceDelegate{
-    func placeChanged(place: Place)
-    func placesChanged()
-    func showPlaceOnMap(place: Place)
-}

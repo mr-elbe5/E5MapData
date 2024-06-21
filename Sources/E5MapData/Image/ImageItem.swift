@@ -67,10 +67,6 @@ open class ImageItem : FileItem{
     
 }
 
-public protocol ImageDelegate{
-    func viewImage(image: ImageItem)
-}
-
 public typealias ImageList = Array<ImageItem>
 
 extension ImageList{

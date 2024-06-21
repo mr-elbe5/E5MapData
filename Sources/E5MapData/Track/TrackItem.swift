@@ -213,11 +213,6 @@ open class TrackItem : PlaceItem{
     
 }
 
-public protocol TrackDelegate{
-    func viewTrackItem(item: TrackItem)
-    func showTrackItemOnMap(item: TrackItem)
-}
-
 public typealias TrackList = Array<TrackItem>
 
 extension TrackList{
