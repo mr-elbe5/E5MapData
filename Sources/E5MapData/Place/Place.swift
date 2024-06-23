@@ -137,7 +137,7 @@ open class Place : UUIDObject, Comparable{
         altitude = 0
         creationDate = Date.localDate
         super.init()
-        evaluatePlacemark()
+        evaluatePlacemark(){}
     }
     
     required public init(from decoder: Decoder) throws {
@@ -157,7 +157,7 @@ open class Place : UUIDObject, Comparable{
         }
         items.sort()
         if name.isEmpty || address.isEmpty{
-            evaluatePlacemark()
+            evaluatePlacemark(){}
         }
     }
     
@@ -175,16 +175,18 @@ open class Place : UUIDObject, Comparable{
         try container.encode(metaList, forKey: .items)
     }
     
-    public func evaluatePlacemark(){
+    public func evaluatePlacemark(_ onFinish: @escaping() -> Void){
+        print("getting placemark for \(name)")
         PlacemarkService.shared.getPlacemark(for: CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)){ result in
             if let placemark = result{
-                if self.name.isEmpty, let name = placemark.name{
-                    self.name = name
-                }
-                if self.address.isEmpty{
-                    self.address = "\(placemark.thoroughfare ?? "") \(placemark.subThoroughfare ?? "")\n\(placemark.postalCode ?? "") \(placemark.locality ?? "")\n\(placemark.country ?? "")"
-                }
+                self.name = placemark.nameString ?? ""
+                print("name is \(self.name)")
+                self.address = placemark.locationString
             }
+            else{
+                print("no result")
+            }
+            onFinish()
         }
         
     }

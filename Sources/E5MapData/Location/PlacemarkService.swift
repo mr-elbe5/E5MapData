@@ -15,10 +15,17 @@ open class PlacemarkService{
     
     public func getPlacemark(for location: CLLocation, result: @escaping(CLPlacemark?) -> Void){
         geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
-            if error == nil, let placemark =  placemarks?[0]{
+            if let error = error{
+                print(error)
+                result(nil)
+                return
+            }
+            if let placemark =  placemarks?[0]{
+                print("got placemark")
                 result(placemark)
             }
             else{
+                print("no placemark")
                 result(nil)
             }
         })
