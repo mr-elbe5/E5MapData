@@ -88,11 +88,9 @@ open class LocationService : CLLocationManager, CLLocationManagerDelegate{
     }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let loc = locations.last!
-        if loc.horizontalAccuracy == -1{
-            return
+        if let loc = locations.last, loc.horizontalAccuracy != -1, loc.horizontalAccuracy <= Preferences.shared.maxHorizontalUncertainty{
+            serviceDelegate?.locationDidChange(location: loc)
         }
-        serviceDelegate?.locationDidChange(location: loc)
     }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
@@ -111,17 +109,6 @@ open class LocationService : CLLocationManager, CLLocationManagerDelegate{
     public func locationManagerDidResumeLocationUpdates(_ manager: CLLocationManager) {
         Log.info("LocationService resume")
         running = true
-    }
-    
-    public func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
-        if region.identifier == "monitoredRegion"{
-            stopMonitoring(for: region)
-            if authorized{
-                startUpdatingLocation()
-                startUpdatingHeading()
-                running = true
-            }
-        }
     }
     
 }

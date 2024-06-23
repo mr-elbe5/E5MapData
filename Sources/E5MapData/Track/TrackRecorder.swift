@@ -11,19 +11,11 @@ open class TrackRecorder{
     public static var track : TrackItem? = nil
     public static var isRecording : Bool = false
     
-    public static func startRecording(startLocation: CLLocation){
+    public static func startRecording(){
         if track == nil{
             track = TrackItem()
-            track!.trackpoints.append(Trackpoint(location: startLocation))
         }
         isRecording = true
-    }
-    
-    public static func updateTrack(with location: CLLocation) -> Bool{
-        if let track = track{
-            return track.addLocation(location)
-        }
-        return false
     }
     
     public static func pauseRecording(){

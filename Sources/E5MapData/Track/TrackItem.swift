@@ -136,79 +136,70 @@ open class TrackItem : PlaceItem{
             }
             last = tp
         }
-        removeAllRedundant()
+        simplifyTrack()
     }
     
     @discardableResult
-    public func addLocation(_ location: CLLocation) -> Bool{
+    public func addTrackpoint(from location: CLLocation){
         let tp = Trackpoint(location: location)
-        tp.checkValidity(maxUncertainty: Preferences.shared.maxHorizontalUncertainty)
-        if !tp.horizontallyValid(maxUncertainty: Preferences.shared.maxHorizontalUncertainty){
-            return false
-        }
-        if let previousTrackpoint = trackpoints.last{
-            tp.updateDeltas(from: previousTrackpoint, minVerticalDistance: Preferences.shared.minVerticalTrackpointDistance)
-            if tp.timeDiff < Preferences.shared.trackpointInterval{
-                return false
-            }
-            if tp.horizontalDistance < Preferences.shared.minHorizontalTrackpointDistance && tp.verticalDistance == 0{
-                return false
-            }
-            //debug("tp.alt = \(tp.altitude)")
-            trackpoints.append(tp)
-            //debug("vertDist = \(tp.verticalDistance)")
-            if Preferences.shared.maxTrackpointInLineDeviation != 0 && removeRedundant(backFrom: trackpoints.count - 1){
-                self.distance = trackpoints.distance
-                upDistance = trackpoints.upDistance
-                downDistance = trackpoints.downDistance
-            }
-            else{
-                self.distance += tp.horizontalDistance
-                if tp.verticalDistance > 0{
-                    upDistance += tp.verticalDistance
-                }
-                else{
-                    //invert negative
-                    downDistance -= tp.verticalDistance
-                }
-            }
-        }
-        else{
+        if trackpoints.isEmpty{
             trackpoints.append(tp)
             startTime = tp.timestamp
+            return
+        }
+        let previousTrackpoint = trackpoints.last!
+        let timeDiff = previousTrackpoint.timestamp.distance(to: tp.timestamp)
+        if tp.timeDiff < Preferences.shared.trackpointInterval{
+            return
+        }
+        let horizontalDiff = previousTrackpoint.coordinate.distance(to: tp.coordinate)
+        if horizontalDiff < Preferences.shared.minHorizontalTrackpointDistance{
+            return
+        }
+        let verticalDiff = previousTrackpoint.altitude - tp.altitude
+        trackpoints.append(tp)
+        distance += horizontalDiff
+        if verticalDiff > 0{
+            upDistance += verticalDiff
+        }
+        else if verticalDiff < 0{
+            downDistance += -verticalDiff
         }
         endTime = tp.timestamp
-        return true
     }
     
-    public func removeRedundant(backFrom last: Int) -> Bool{
-        if last < 2 || last >= trackpoints.count{
-            return false
-        }
-        let tp0 = trackpoints[last - 2]
-        let tp1 = trackpoints[last - 1]
-        let tp2 = trackpoints[last]
-        //calculate expected middle coordinated between outer coordinates by triangles
-        let expectedLatitude = (tp2.coordinate.latitude - tp0.coordinate.latitude)/(tp2.coordinate.longitude - tp0.coordinate.longitude) * (tp1.coordinate.longitude - tp0.coordinate.longitude) + tp0.coordinate.latitude
-        let expectedCoordinate = CLLocationCoordinate2D(latitude: expectedLatitude, longitude: tp1.coordinate.longitude)
-        //check for middle coordinate being close to expected coordinate
-        if tp1.coordinate.distance(to: expectedCoordinate) <= Preferences.shared.maxTrackpointInLineDeviation{
-            trackpoints.remove(at: last - 1)
-            tp2.updateDeltas(from: tp0, minVerticalDistance: Preferences.shared.minVerticalTrackpointDistance)
-            return true
-        }
-        return false
-    }
-    
-    public func removeAllRedundant(){
-        Log.info("removing redundant trackpoints starting with \(trackpoints.count)")
+    public func simplifyTrack(){
+        Log.info("simplifying track starting with \(trackpoints.count) trackpoints")
         var i = 0
         while i + 2 < trackpoints.count{
-            if !removeRedundant(backFrom: i){
+            if canDropMiddleTrackpoint(tp0: trackpoints[i], tp1: trackpoints[i+1], tp2: trackpoints[i+2]){
+                trackpoints.remove(at: i+1)
+            }
+            else{
                 i += 1
             }
         }
-        Log.info("removing redundant trackpoints ending with \(trackpoints.count)")
+        Log.info("ending with \(trackpoints.count)")
+    }
+    
+    public func canDropMiddleTrackpoint(tp0: Trackpoint, tp1: Trackpoint, tp2: Trackpoint) -> Bool{
+        //calculate expected middle coordinated between outer coordinates by triangles
+        let outerLatDiff = tp2.coordinate.latitude - tp0.coordinate.latitude
+        let outerLonDiff = tp2.coordinate.longitude - tp0.coordinate.longitude
+        var expectedLatitude = tp1.coordinate.latitude
+        if outerLatDiff == 0{
+            expectedLatitude = tp0.coordinate.latitude
+        }
+        else if outerLonDiff == 0{
+            expectedLatitude = tp1.coordinate.latitude
+        }
+        else{
+            let innerLonDiff = tp1.coordinate.longitude - tp0.coordinate.longitude
+            expectedLatitude = outerLatDiff*(innerLonDiff/outerLonDiff) + tp0.coordinate.latitude
+        }
+        let expectedCoordinate = CLLocationCoordinate2D(latitude: expectedLatitude, longitude: tp1.coordinate.longitude)
+        //check for middle coordinate being close to expected coordinate
+        return tp1.coordinate.distance(to: expectedCoordinate) <= Preferences.shared.maxTrackpointInLineDeviation
     }
     
 }

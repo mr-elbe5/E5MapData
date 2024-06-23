@@ -19,7 +19,6 @@ open class Preferences: Identifiable, Codable{
     
     public static var defaultTrackpointInterval: Double = 3
     public static var defaultMaxHorizontalUncertainty: Double = 3
-    public static var defaultMaxSpeedUncertaintyFactor: Double = 2
     
     public static var defaultMinHorizontalTrackpointDistance: Double = 3
     public static var defaultMinVerticalTrackpointDistance: Double = 1.5
@@ -54,7 +53,6 @@ open class Preferences: Identifiable, Codable{
     
     public var trackpointInterval: Double = defaultTrackpointInterval
     public var maxHorizontalUncertainty: Double = defaultMaxHorizontalUncertainty
-    public var maxSpeedUncertaintyFactor: Double = defaultMaxSpeedUncertaintyFactor
     public var minHorizontalTrackpointDistance = defaultMinHorizontalTrackpointDistance
     public var minVerticalTrackpointDistance = defaultMinVerticalTrackpointDistance
     public var maxTrackpointInLineDeviation = defaultMaxTrackpointInLineDeviation
@@ -71,7 +69,6 @@ open class Preferences: Identifiable, Codable{
         followTrack = try values.decodeIfPresent(Bool.self, forKey: .followTrack) ?? false
         trackpointInterval = try values.decodeIfPresent(Double.self, forKey: .trackpointInterval) ?? Preferences.defaultTrackpointInterval
         maxHorizontalUncertainty = try values.decodeIfPresent(Double.self, forKey: .maxHorizontalUncertainty) ?? Preferences.defaultMaxHorizontalUncertainty
-        maxSpeedUncertaintyFactor = try values.decodeIfPresent(Double.self, forKey: .maxSpeedUncertaintyFactor) ?? Preferences.defaultMaxSpeedUncertaintyFactor
         minHorizontalTrackpointDistance = try values.decodeIfPresent(Double.self, forKey: .minHorizontalTrackpointDistance) ?? Preferences.defaultMinHorizontalTrackpointDistance
         minVerticalTrackpointDistance = try values.decodeIfPresent(Double.self, forKey: .minVerticalTrackpointDistance) ?? Preferences.defaultMinVerticalTrackpointDistance
         maxTrackpointInLineDeviation = try values.decodeIfPresent(Double.self, forKey: .maxTrackpointInLineDeviation) ?? Preferences.defaultMaxTrackpointInLineDeviation
@@ -85,7 +82,6 @@ open class Preferences: Identifiable, Codable{
         try container.encode(urlTemplate, forKey: .urlTemplate)
         try container.encode(followTrack, forKey: .followTrack)
         try container.encode(maxHorizontalUncertainty, forKey: .maxHorizontalUncertainty)
-        try container.encode(maxSpeedUncertaintyFactor, forKey: .maxSpeedUncertaintyFactor)
         try container.encode(minHorizontalTrackpointDistance, forKey: .minHorizontalTrackpointDistance)
         try container.encode(minVerticalTrackpointDistance, forKey: .minVerticalTrackpointDistance)
         try container.encode(maxTrackpointInLineDeviation, forKey: .maxTrackpointInLineDeviation)

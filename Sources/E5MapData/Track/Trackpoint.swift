@@ -31,7 +31,6 @@ open class Trackpoint: Codable, Identifiable{
     // gps values
     public var horizontalAccuracy: Double = 0
     public var speed: Double = 0
-    public var speedAccuracy: Double = 0
     
     public var kmhSpeed: Int{
         guard timeDiff > 0 else { return 0}
@@ -54,9 +53,7 @@ open class Trackpoint: Codable, Identifiable{
         coordinate = location.coordinate
         altitude = location.altitude
         timestamp = location.timestamp.toLocalDate()
-        horizontalAccuracy = location.horizontalAccuracy
         speed = location.speed
-        speedAccuracy = location.speedAccuracy
     }
     
     required public init?(coder: NSCoder) {
@@ -81,24 +78,6 @@ open class Trackpoint: Codable, Identifiable{
         try container.encode(altitude, forKey: .altitude)
         try container.encode(timestamp, forKey: .timestamp)
         try container.encode(valid, forKey: .valid)
-    }
-    
-    public func  horizontallyValid(maxUncertainty: CGFloat) -> Bool{
-        horizontalAccuracy != -1 && (speed == 0 || speedAccuracy != -1) && horizontalAccuracy < maxUncertainty
-    }
-    
-    public func checkValidity(maxUncertainty: Double){
-        valid = horizontalAccuracy != -1 && (speed != 0 && speedAccuracy != -1) && horizontalAccuracy < maxUncertainty
-    }
-    
-    public func updateDeltas(from tp: Trackpoint, minVerticalDistance: CGFloat, distance: CGFloat? = nil){
-        timeDiff = tp.timestamp.distance(to: timestamp)
-        horizontalDistance = distance ?? tp.coordinate.distance(to: coordinate)
-        verticalDistance = altitude - tp.altitude
-        if abs(verticalDistance) < minVerticalDistance{
-            altitude = tp.altitude
-            verticalDistance = 0
-        }
     }
     
 }
