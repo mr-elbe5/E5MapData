@@ -26,11 +26,8 @@ open class Place : UUIDObject, Comparable{
         case longitude
         case altitude
         case creationDate
-        case timestamp //deprecated
         case name
         case address
-        case note //deprecated
-        case media //deprecated
         case items
     }
     public var coordinate: CLLocationCoordinate2D
@@ -137,7 +134,7 @@ open class Place : UUIDObject, Comparable{
         altitude = 0
         creationDate = Date.localDate
         super.init()
-        evaluatePlacemark(){}
+        evaluatePlacemark()
     }
     
     required public init(from decoder: Decoder) throws {
@@ -147,18 +144,15 @@ open class Place : UUIDObject, Comparable{
         coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         mapPoint = CGPoint(coordinate)
         altitude = try values.decodeIfPresent(CLLocationDistance.self, forKey: .altitude) ?? 0
-        creationDate = try values.decodeIfPresent(Date.self, forKeys: [.creationDate, .timestamp]) ?? Date.localDate
+        creationDate = try values.decodeIfPresent(Date.self, forKey: .creationDate) ?? Date.localDate
         name = try values.decodeIfPresent(String.self, forKey: .name) ?? ""
         address = try values.decodeIfPresent(String.self, forKey: .address) ?? ""
-        self.items = try values.decodeIfPresent(Array<PlaceItemMetaData>.self, forKeys: [.items, .media])?.toItemList() ?? PlaceItemList()
+        self.items = try values.decodeIfPresent(Array<PlaceItemMetaData>.self, forKey: .items)?.toItemList() ?? PlaceItemList()
         try super.init(from: decoder)
         for item in items{
             item.place = self
         }
         items.sort()
-        if name.isEmpty || address.isEmpty{
-            evaluatePlacemark(){}
-        }
     }
     
     override public func encode(to encoder: Encoder) throws {
@@ -175,20 +169,25 @@ open class Place : UUIDObject, Comparable{
         try container.encode(metaList, forKey: .items)
     }
     
-    public func evaluatePlacemark(_ onFinish: @escaping() -> Void){
+    public func assertPlacemark(){
+        if name.isEmpty || address.isEmpty{
+            evaluatePlacemark()
+        }
+    }
+    
+    public func evaluatePlacemark(){
         print("getting placemark for \(name)")
         PlacemarkService.shared.getPlacemark(for: CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)){ result in
             if let placemark = result{
                 self.name = placemark.nameString ?? ""
                 print("name is \(self.name)")
                 self.address = placemark.locationString
+                AppData.shared.saveLocally()
             }
             else{
                 print("no result")
             }
-            onFinish()
         }
-        
     }
     
     public func resetCoordinateRegion(){

@@ -120,19 +120,4 @@ extension PlaceList{
         return list
     }
     
-    
-    public func reloadPlacemarks(){
-        if !isEmpty{
-            reloadPlacemark(idx: 0)
-        }
-    }
-    
-    func reloadPlacemark(idx: Int){
-        if idx < self.count{
-            self[idx].evaluatePlacemark(){
-                self.reloadPlacemark(idx: idx + 1)
-            }
-        }
-    }
-    
 }
