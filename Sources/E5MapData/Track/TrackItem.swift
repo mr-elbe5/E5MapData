@@ -149,7 +149,8 @@ open class TrackItem : PlaceItem{
         }
         let previousTrackpoint = trackpoints.last!
         let timeDiff = previousTrackpoint.timestamp.distance(to: tp.timestamp)
-        if tp.timeDiff < Preferences.shared.trackpointInterval{
+        print (timeDiff)
+        if timeDiff < Preferences.shared.trackpointInterval{
             return
         }
         let horizontalDiff = previousTrackpoint.coordinate.distance(to: tp.coordinate)

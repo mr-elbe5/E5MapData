@@ -13,8 +13,4 @@ extension CLLocation{
         "lat: \(coordinate.latitude), lon: \(coordinate.longitude), speed: \(speed), course: \(course), time: \(timestamp.timestampString())"
     }
     
-    public var horizontalUncertainty : CLLocationAccuracy{
-        horizontalAccuracy
-    }
-    
 }

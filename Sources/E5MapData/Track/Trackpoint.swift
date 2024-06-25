@@ -14,30 +14,12 @@ open class Trackpoint: Codable, Identifiable{
         case longitude
         case altitude
         case timestamp
-        case speed
-        case valid
     }
     
     public var coordinate: CLLocationCoordinate2D
     public var altitude: Double
     public var timestamp: Date
     public var mapPoint: CGPoint
-    public var valid: Bool = true
-    
-    public var horizontalDistance: CGFloat = 0
-    public var verticalDistance: CGFloat = 0
-    public var timeDiff: CGFloat = 0
-    
-    // gps values
-    public var horizontalAccuracy: Double = 0
-    public var speed: Double = 0
-    
-    public var kmhSpeed: Int{
-        guard timeDiff > 0 else { return 0}
-        // km/h
-        let v = horizontalDistance/timeDiff
-        return Int(v * 3.6)
-    }
     
     // for gpx parser
     public init(coordinate: CLLocationCoordinate2D, altitude: CLLocationDistance, timestamp: Date){
@@ -53,7 +35,8 @@ open class Trackpoint: Codable, Identifiable{
         coordinate = location.coordinate
         altitude = location.altitude
         timestamp = location.timestamp.toLocalDate()
-        speed = location.speed
+        TrackRecorder.instance?.speed = location.speed
+        TrackRecorder.instance?.horizontalAccuracy = location.horizontalAccuracy
     }
     
     required public init?(coder: NSCoder) {
@@ -68,7 +51,6 @@ open class Trackpoint: Codable, Identifiable{
         mapPoint = CGPoint(coordinate)
         altitude = try values.decodeIfPresent(CLLocationDistance.self, forKey: .altitude) ?? 0
         timestamp = try values.decodeIfPresent(Date.self, forKey: .timestamp) ?? Date.localDate
-        valid = try values.decodeIfPresent(Bool.self, forKey: .valid) ?? true
     }
     
     open func encode(to encoder: Encoder) throws {
@@ -77,7 +59,6 @@ open class Trackpoint: Codable, Identifiable{
         try container.encode(coordinate.longitude, forKey: .longitude)
         try container.encode(altitude, forKey: .altitude)
         try container.encode(timestamp, forKey: .timestamp)
-        try container.encode(valid, forKey: .valid)
     }
     
 }

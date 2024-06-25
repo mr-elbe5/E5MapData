@@ -11,34 +11,6 @@ public typealias TrackpointList = Array<Trackpoint>
 
 extension TrackpointList{
     
-    public var distance: CGFloat{
-        var d: CGFloat = 0
-        for tp in self{
-            d += tp.horizontalDistance
-        }
-        return d
-    }
-    
-    public var upDistance: CGFloat{
-        var d: CGFloat = 0
-        for tp in self{
-            if tp.verticalDistance > 0{
-                d += tp.verticalDistance
-            }
-        }
-        return d
-    }
-    
-    public var downDistance: CGFloat{
-        var d: CGFloat = 0
-        for tp in self{
-            if tp.verticalDistance < 0{
-                d -= tp.verticalDistance
-            }
-        }
-        return d
-    }
-    
     public var boundingCoordinates: (topLeft: CLLocationCoordinate2D, bottomRight: CLLocationCoordinate2D)?{
         get{
             if isEmpty{
