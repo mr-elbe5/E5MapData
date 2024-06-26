@@ -5,10 +5,29 @@
  */
 
 import CoreLocation
+import E5Data
 
 open class TrackRecorder: Codable{
     
+    public static var storeKey = "recordedTrack"
+    
     public static var instance: TrackRecorder? = nil
+    
+    public static func load(){
+        if let recorder: TrackRecorder = UserDefaults.standard.load(forKey: TrackRecorder.storeKey){
+            instance = recorder
+            instance?.interrupted = true
+            Log.info("interrupted track loaded")
+            UserDefaults.standard.removeObject(forKey: TrackRecorder.storeKey)
+        }
+    }
+    
+    public static func save(){
+        if let recorder = instance{
+            UserDefaults.standard.save(forKey: TrackRecorder.storeKey, value: recorder)
+            Log.info("interrupted track saved")
+        }
+    }
     
     public static func startTracking(){
         instance = TrackRecorder()
@@ -36,6 +55,7 @@ open class TrackRecorder: Codable{
     
     public var track:TrackItem
     public var isRecording : Bool
+    public var interrupted : Bool = false
     
     public var speed: Double
     public var horizontalAccuracy: Double
