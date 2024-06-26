@@ -17,10 +17,10 @@ open class Preferences: Identifiable, Codable{
     public static var elbe5TopoUrl = "https://maps.elbe5.de/topo/{z}/{x}/{y}.png"
     public static var osmUrl = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
     
-    public static var defaultTrackpointInterval: Double = 3
-    public static var defaultMaxHorizontalUncertainty: Double = 3
+    public static var defaultTrackpointInterval: Double = 5
+    public static var defaultMaxHorizontalUncertainty: Double = 5
     
-    public static var defaultMinHorizontalTrackpointDistance: Double = 3
+    public static var defaultMinHorizontalTrackpointDistance: Double = 5
     public static var defaultMinVerticalTrackpointDistance: Double = 1.5
     
     public static var defaultMaxTrackpointInLineDeviation: Double = 2.0
