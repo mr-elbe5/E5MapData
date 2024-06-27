@@ -22,13 +22,6 @@ open class TrackRecorder: Codable{
         }
     }
     
-    public static func save(){
-        if let recorder = instance{
-            UserDefaults.standard.save(forKey: TrackRecorder.storeKey, value: recorder)
-            Log.info("interrupted track saved")
-        }
-    }
-    
     public static func startTracking(){
         instance = TrackRecorder()
     }
@@ -53,9 +46,11 @@ open class TrackRecorder: Codable{
         case horizontalAccuracy
     }
     
-    public var track:TrackItem
-    public var isRecording : Bool
-    public var interrupted : Bool = false
+    public var track: TrackItem
+    public var isRecording: Bool
+    
+    public var lastSaved = Date()
+    public var interrupted: Bool = false
     
     public var speed: Double
     public var horizontalAccuracy: Double
@@ -100,6 +95,18 @@ open class TrackRecorder: Codable{
         isRecording = true
     }
     
+    public func addTrackpoint(from location: CLLocation){
+        track.addTrackpoint(from: location)
+        if lastSaved.timeIntervalSinceReferenceDate > 5*60{
+            save()
+            Log.info("track saved")
+            lastSaved = Date()
+        }
+    }
     
+    public func save(){
+        UserDefaults.standard.save(forKey: TrackRecorder.storeKey, value: self)
+        Log.info("interrupted track saved")
+    }
     
 }

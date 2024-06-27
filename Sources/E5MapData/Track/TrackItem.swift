@@ -139,7 +139,6 @@ open class TrackItem : PlaceItem{
         simplifyTrack()
     }
     
-    @discardableResult
     public func addTrackpoint(from location: CLLocation){
         let tp = Trackpoint(location: location)
         if trackpoints.isEmpty{
