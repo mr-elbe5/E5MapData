@@ -8,31 +8,31 @@ import Foundation
 import CloudKit
 import E5Data
 
-public typealias PlaceList = Array<Place>
+public typealias LocationList = Array<Location>
 
-extension PlaceList{
+extension LocationList{
     
-    public mutating func remove(_ place: Place){
+    public mutating func remove(_ location: Location){
         removeAll(where: {
-            $0.equals(place)
+            $0.equals(location)
         })
     }
     
-    public mutating func removePlaces(of list: PlaceList){
-        for place in list{
-            remove(place)
+    public mutating func removeLocations(of list: LocationList){
+        for location in list{
+            remove(location)
         }
     }
     
     public mutating func sortAll(){
         self.sort()
-        for place in self{
-            place.sortItems()
+        for location in self{
+            location.sortItems()
         }
     }
     
-    public var filteredPlaces : PlaceList{
-        switch AppState.shared.placeFilter{
+    public var filteredLocations : LocationList{
+        switch AppState.shared.locationFilter{
         case .all: return self
         case .media:
             return self.filter({
@@ -52,8 +52,8 @@ extension PlaceList{
     public var trackItems: Array<TrackItem>{
         get{
             var trackList = Array<TrackItem>()
-            for place in self{
-                trackList.append(contentsOf: place.tracks)
+            for location in self{
+                trackList.append(contentsOf: location.tracks)
             }
             trackList.sortByDate()
             return trackList
@@ -63,8 +63,8 @@ extension PlaceList{
     public var imageItems: Array<ImageItem>{
         get{
             var imageList = Array<ImageItem>()
-            for place in self{
-                imageList.append(contentsOf: place.images)
+            for location in self{
+                imageList.append(contentsOf: location.images)
             }
             imageList.sort()
             return imageList
@@ -74,47 +74,47 @@ extension PlaceList{
     public var fileItems: FileItemList{
         get{
             var fileList = FileItemList()
-            for place in self{
-                fileList.append(contentsOf: place.fileItems)
+            for location in self{
+                fileList.append(contentsOf: location.fileItems)
             }
             return fileList
         }
     }
     
     public func updateCreationDates(){
-        for place in self{
-            if !place.items.isEmpty{
+        for location in self{
+            if !location.items.isEmpty{
                 var creationDate = Date.localDate
-                for item in place.items{
+                for item in location.items{
                     if item.creationDate < creationDate{
                         creationDate = item.creationDate
                     }
                 }
-                if creationDate < place.creationDate{
-                    place.creationDate = creationDate
+                if creationDate < location.creationDate{
+                    location.creationDate = creationDate
                 }
             }
         }
     }
     
     public mutating func removeDuplicates(){
-        for place in self{
-            let duplicates = getDuplicates(of: place)
+        for location in self{
+            let duplicates = getDuplicates(of: location)
             if duplicates.count > 0{
-                Log.warn("removing \(count) duplicates of id \(place.id)")
+                Log.warn("removing \(count) duplicates of id \(location.id)")
             }
             for duplicate in duplicates{
                 self.remove(duplicate)
             }
-            place.items.removeDuplicates()
+            location.items.removeDuplicates()
         }
     }
     
-    public func getDuplicates(of place: Place) -> PlaceList{
-        var list = PlaceList()
-        for otherPlace in self{
-            if place != otherPlace, place.equals(otherPlace){
-                list.append(otherPlace)
+    public func getDuplicates(of location: Location) -> LocationList{
+        var list = LocationList()
+        for otherLocation in self{
+            if location != otherLocation, location.equals(otherLocation){
+                list.append(otherLocation)
             }
         }
         return list

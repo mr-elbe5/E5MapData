@@ -25,7 +25,7 @@ open class Preferences: Identifiable, Codable{
     
     public static var defaultMaxTrackpointInLineDeviation: Double = 2.0
     
-    public static var defaultMaxPlaceMergeDistance: Double = 10.0
+    public static var defaultMaxLocationMergeDistance: Double = 10.0
     
     public static var defaultMaxSearchResults: Int = 5
     
@@ -43,7 +43,7 @@ open class Preferences: Identifiable, Codable{
         case minVerticalTrackpointDistance
         case maxTrackpointInLineDeviation
         case maxSearchResults
-        case maxPlaceMergeDistance
+        case maxLocationMergeDistance
         case useICloud
     }
 
@@ -57,7 +57,7 @@ open class Preferences: Identifiable, Codable{
     public var minVerticalTrackpointDistance = defaultMinVerticalTrackpointDistance
     public var maxTrackpointInLineDeviation = defaultMaxTrackpointInLineDeviation
     public var maxSearchResults = defaultMaxSearchResults
-    public var maxPlaceMergeDistance: Double = defaultMaxPlaceMergeDistance
+    public var maxLocationMergeDistance: Double = defaultMaxLocationMergeDistance
     public var useICloud: Bool = defaultUseICloud
     
     public init(){
@@ -73,7 +73,7 @@ open class Preferences: Identifiable, Codable{
         minVerticalTrackpointDistance = try values.decodeIfPresent(Double.self, forKey: .minVerticalTrackpointDistance) ?? Preferences.defaultMinVerticalTrackpointDistance
         maxTrackpointInLineDeviation = try values.decodeIfPresent(Double.self, forKey: .maxTrackpointInLineDeviation) ?? Preferences.defaultMaxTrackpointInLineDeviation
         maxSearchResults = try values.decodeIfPresent(Int.self, forKey: .maxSearchResults) ?? Preferences.defaultMaxSearchResults
-        maxPlaceMergeDistance = try values.decodeIfPresent(Double.self, forKey: .maxPlaceMergeDistance) ?? Preferences.defaultMaxPlaceMergeDistance
+        maxLocationMergeDistance = try values.decodeIfPresent(Double.self, forKey: .maxLocationMergeDistance) ?? Preferences.defaultMaxLocationMergeDistance
         useICloud = try values.decodeIfPresent(Bool.self, forKey: .useICloud) ?? Preferences.defaultUseICloud
     }
     
@@ -86,7 +86,7 @@ open class Preferences: Identifiable, Codable{
         try container.encode(minVerticalTrackpointDistance, forKey: .minVerticalTrackpointDistance)
         try container.encode(maxTrackpointInLineDeviation, forKey: .maxTrackpointInLineDeviation)
         try container.encode(maxSearchResults, forKey: .maxSearchResults)
-        try container.encode(maxPlaceMergeDistance, forKey: .maxPlaceMergeDistance)
+        try container.encode(maxLocationMergeDistance, forKey: .maxLocationMergeDistance)
         try container.encode(useICloud, forKey: .useICloud)
     }
     

@@ -8,13 +8,13 @@ import CoreLocation
 import CloudKit
 import E5Data
 
-open class Place : UUIDObject, Comparable{
+open class Location : UUIDObject, Comparable{
     
-    public static func == (lhs: Place, rhs: Place) -> Bool {
+    public static func == (lhs: Location, rhs: Location) -> Bool {
         lhs.id == rhs.id
     }
     
-    public static func < (lhs: Place, rhs: Place) -> Bool {
+    public static func < (lhs: Location, rhs: Location) -> Bool {
         AppState.shared.sortAscending ? lhs.creationDate < rhs.creationDate : lhs.creationDate > rhs.creationDate
     }
     
@@ -36,7 +36,7 @@ open class Place : UUIDObject, Comparable{
     public var mapPoint: CGPoint
     public var name : String = ""
     public var address : String = ""
-    public var items : PlaceItemList
+    public var items : LocatedItemsList
     public var _coordinateRegion: CoordinateRegion? = nil
     
     public var itemCount: Int{
@@ -106,7 +106,7 @@ open class Place : UUIDObject, Comparable{
     public var coordinateRegion: CoordinateRegion{
         get{
             if _coordinateRegion == nil{
-                _coordinateRegion = coordinate.coordinateRegion(radiusMeters: Preferences.shared.maxPlaceMergeDistance)
+                _coordinateRegion = coordinate.coordinateRegion(radiusMeters: Preferences.shared.maxLocationMergeDistance)
             }
             return _coordinateRegion!
         }
@@ -120,7 +120,7 @@ open class Place : UUIDObject, Comparable{
     
     public var dataRecord: CKRecord{
         get{
-            let record = CKRecord(recordType: CKRecord.placeType, recordID: recordId)
+            let record = CKRecord(recordType: CKRecord.locationType, recordID: recordId)
             record["uuid"] = id.uuidString
             record["json"] = self.toJSON()
             return record
@@ -128,7 +128,7 @@ open class Place : UUIDObject, Comparable{
     }
     
     public init(coordinate: CLLocationCoordinate2D){
-        items = PlaceItemList()
+        items = LocatedItemsList()
         mapPoint = CGPoint(coordinate)
         self.coordinate = coordinate
         altitude = 0
@@ -147,10 +147,10 @@ open class Place : UUIDObject, Comparable{
         creationDate = try values.decodeIfPresent(Date.self, forKey: .creationDate) ?? Date.localDate
         name = try values.decodeIfPresent(String.self, forKey: .name) ?? ""
         address = try values.decodeIfPresent(String.self, forKey: .address) ?? ""
-        self.items = try values.decodeIfPresent(Array<PlaceItemMetaData>.self, forKey: .items)?.toItemList() ?? PlaceItemList()
+        self.items = try values.decodeIfPresent(Array<LocatedItemMetaData>.self, forKey: .items)?.toItemList() ?? LocatedItemsList()
         try super.init(from: decoder)
         for item in items{
-            item.place = self
+            item.location = self
         }
         items.sort()
     }
@@ -164,7 +164,7 @@ open class Place : UUIDObject, Comparable{
         try container.encode(creationDate, forKey: .creationDate)
         try container.encode(name, forKey: .name)
         try container.encode(address, forKey: .address)
-        var metaList = Array<PlaceItemMetaData>()
+        var metaList = Array<LocatedItemMetaData>()
         metaList.loadItemList(items: self.items)
         try container.encode(metaList, forKey: .items)
     }
@@ -194,7 +194,7 @@ open class Place : UUIDObject, Comparable{
         _coordinateRegion = nil
     }
     
-    public func item(at idx: Int) -> PlaceItem{
+    public func item(at idx: Int) -> LocatedItem{
         items[idx]
     }
     
@@ -206,20 +206,20 @@ open class Place : UUIDObject, Comparable{
         items.deselectAll()
     }
     
-    public func addItem(item: PlaceItem){
+    public func addItem(item: LocatedItem){
         if !items.containsEqual(item){
-            item.place = self
+            item.location = self
             items.append(item)
         }
     }
     
-    public func getItem(id: UUID) -> PlaceItem?{
+    public func getItem(id: UUID) -> LocatedItem?{
         items.first(where:{
             $0.id == id
         })
     }
     
-    public func deleteItem(item: PlaceItem){
+    public func deleteItem(item: LocatedItem){
         item.prepareDelete()
         items.remove(item)
     }
@@ -235,8 +235,8 @@ open class Place : UUIDObject, Comparable{
         items.sort()
     }
     
-    public func mergePlace(from sourcePlace: Place){
-        for sourceItem in sourcePlace.items{
+    public func mergeLocation(from sourceLocation: Location){
+        for sourceItem in sourceLocation.items{
             if !items.containsEqual(sourceItem){
                 items.append(sourceItem)
             }

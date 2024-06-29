@@ -6,7 +6,7 @@
 
 import Foundation
 
-public enum PlaceFilter: String{
+public enum LocationFilter: String{
     case all
     case media
     case track

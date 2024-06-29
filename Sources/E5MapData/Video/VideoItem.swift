@@ -15,7 +15,7 @@ open class VideoItem : FileItem{
     
     public var time: Double = 0.0
     
-    override public var type : PlaceItemType{
+    override public var type : LocatedItemType{
         get{
             return .video
         }

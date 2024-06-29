@@ -7,7 +7,7 @@
 import CoreLocation
 import E5Data
 
-open class TrackItem : PlaceItem{
+open class TrackItem : LocatedItem{
     
     private enum CodingKeys: String, CodingKey {
         case startTime
@@ -33,7 +33,7 @@ open class TrackItem : PlaceItem{
     public var downDistance : CGFloat
     public var note : String
     
-    override public var type : PlaceItemType{
+    override public var type : LocatedItemType{
         get{
             return .track
         }

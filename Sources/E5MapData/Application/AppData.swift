@@ -14,50 +14,50 @@ open class AppData{
     
     public static var shared = AppData()
     
-    public var places = PlaceList()
+    public var locations = LocationList()
     
     public func resetCoordinateRegions() {
-        for place in places{
-            place.resetCoordinateRegion()
+        for location in locations{
+            location.resetCoordinateRegion()
         }
     }
     
-    public func createPlace(coordinate: CLLocationCoordinate2D) -> Place{
-        let place = addPlace(coordinate: coordinate)
-        return place
+    public func createLocation(coordinate: CLLocationCoordinate2D) -> Location{
+        let location = addLocation(coordinate: coordinate)
+        return location
     }
     
-    public func addPlace(coordinate: CLLocationCoordinate2D) -> Place{
-        let place = Place(coordinate: coordinate)
-        places.append(place)
-        return place
+    public func addLocation(coordinate: CLLocationCoordinate2D) -> Location{
+        let location = Location(coordinate: coordinate)
+        locations.append(location)
+        return location
     }
     
-    public func deletePlace(_ place: Place){
-        for idx in 0..<places.count{
-            if places[idx].equals(place){
-                place.deleteAllItems()
-                places.remove(place)
+    public func deleteLocation(_ location: Location){
+        for idx in 0..<locations.count{
+            if locations[idx].equals(location){
+                location.deleteAllItems()
+                locations.remove(location)
                 return
             }
         }
     }
     
-    public func deleteAllPlaces(){
-        for idx in 0..<places.count{
-            places[idx].deleteAllItems()
+    public func deleteAllLocations(){
+        for idx in 0..<locations.count{
+            locations[idx].deleteAllItems()
         }
-        places.removeAll()
+        locations.removeAll()
     }
     
-    public func getPlace(coordinate: CLLocationCoordinate2D) -> Place?{
-        places.first(where:{
+    public func getLocation(coordinate: CLLocationCoordinate2D) -> Location?{
+        locations.first(where:{
             $0.coordinateRegion.contains(coordinate: coordinate)
         })
     }
     
-    public func getPlace(id: UUID) -> Place?{
-        places.first(where:{
+    public func getLocation(id: UUID) -> Location?{
+        locations.first(where:{
             $0.id == id
         })
     }
@@ -65,22 +65,22 @@ open class AppData{
     // local persistance
     
     public func loadLocally(){
-        if let list : PlaceList = UserDefaults.standard.load(forKey: AppData.storeKey){
-            places = list
+        if let list : LocationList = UserDefaults.standard.load(forKey: AppData.storeKey){
+            locations = list
         }
         else{
-            places = PlaceList()
+            locations = LocationList()
         }
     }
     
     public func saveLocally(){
-        UserDefaults.standard.save(forKey: AppData.storeKey, value: places)
+        UserDefaults.standard.save(forKey: AppData.storeKey, value: locations)
     }
     
     // file persistance
     
     public func saveAsFile() -> URL?{
-        let value = places.toJSON()
+        let value = locations.toJSON()
         let url = FileManager.tempURL.appendingPathComponent(AppData.storeKey + ".json")
         if FileManager.default.saveFile(text: value, url: url){
             return url
@@ -89,8 +89,8 @@ open class AppData{
     }
     
     public func loadFromFile(url: URL){
-        if let string = FileManager.default.readTextFile(url: url),let data : PlaceList = PlaceList.fromJSON(encoded: string){
-            places = data
+        if let string = FileManager.default.readTextFile(url: url),let data : LocationList = LocationList.fromJSON(encoded: string){
+            locations = data
         }
     }
     
@@ -98,7 +98,7 @@ open class AppData{
         let fileURLs = FileManager.default.listAllURLs(dirURL: FileManager.mediaDirURL)
         var itemURLs = Array<URL>()
         var count = 0
-        for item in places.fileItems{
+        for item in locations.fileItems{
             itemURLs.append(item.fileURL)
         }
         for url in fileURLs{

@@ -7,7 +7,7 @@
 import CloudKit
 import E5Data
 
-open class FileItem : PlaceItem{
+open class FileItem : LocatedItem{
     
     public static var recordMetaKeys = ["uuid"]
     public static var recordDataKeys = ["uuid", "asset"]

@@ -7,15 +7,15 @@
 import CoreLocation
 import E5Data
 
-open class PlaceGroup{
+open class LocationGroup{
     
     public var center: CLLocationCoordinate2D? = nil
     public var centerPlanetPosition: CGPoint? = nil
-    public var places = PlaceList()
+    public var locations = LocationList()
     
     public var hasMedia: Bool{
-        for place in places{
-            if place.hasMedia{
+        for location in locations{
+            if location.hasMedia{
                 return true
             }
         }
@@ -23,8 +23,8 @@ open class PlaceGroup{
     }
     
     public var hasTrack: Bool{
-        for place in places{
-            if place.hasTrack{
+        for location in locations{
+            if location.hasTrack{
                 return true
             }
         }
@@ -32,15 +32,15 @@ open class PlaceGroup{
     }
     
     public var centralCoordinate: CLLocationCoordinate2D?{
-        let count = places.count
+        let count = locations.count
         if count < 2{
             return nil
         }
         var lat = 0.0
         var lon = 0.0
-        for place in places{
-            lat += place.coordinate.latitude
-            lon += place.coordinate.longitude
+        for location in locations{
+            lat += location.coordinate.latitude
+            lon += location.coordinate.longitude
         }
         lat = lat/Double(count)
         lon = lon/Double(count)
@@ -50,10 +50,10 @@ open class PlaceGroup{
     public init(){
     }
     
-    public func isWithinRadius(place: Place, radius: CGFloat) -> Bool{
+    public func isWithinRadius(location: Location, radius: CGFloat) -> Bool{
         //debug("LocationGroup checking radius")
         if let center = center{
-            let dist = center.distance(to: place.coordinate)
+            let dist = center.distance(to: location.coordinate)
             //debug("dist = \(dist) at radius \(radius)")
             return dist <= radius
         }
@@ -62,12 +62,12 @@ open class PlaceGroup{
         }
     }
     
-    public func hasPlace(place: Place) -> Bool{
-        places.containsEqual(place)
+    public func hasLocation(location: Location) -> Bool{
+        locations.containsEqual(location)
     }
     
-    public func addPlace(place: Place){
-        places.append(place)
+    public func addLocation(location: Location){
+        locations.append(location)
     }
     
     public func setCenter(){
@@ -76,7 +76,7 @@ open class PlaceGroup{
         var minLat : CGFloat? = nil
         var maxLat : CGFloat? = nil
         
-        for loc in places{
+        for loc in locations{
             minLon = min(minLon ?? CGFloat.greatestFiniteMagnitude, loc.coordinate.longitude)
             maxLon = max(maxLon ?? -CGFloat.greatestFiniteMagnitude, loc.coordinate.longitude)
             minLat = min(minLat ?? CGFloat.greatestFiniteMagnitude, loc.coordinate.latitude)

@@ -6,24 +6,24 @@
 
 import Foundation
 
-open class PlaceItemMetaData : Identifiable, Codable{
+open class LocatedItemMetaData : Identifiable, Codable{
     
     private enum CodingKeys: CodingKey{
         case type
         case data
     }
     
-    public var type : PlaceItemType
-    public var data : PlaceItem
+    public var type : LocatedItemType
+    public var data : LocatedItem
     
-    public init(item: PlaceItem){
+    public init(item: LocatedItem){
         self.type = item.type
         self.data = item
     }
     
     required public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        type = try values.decode(PlaceItemType.self, forKey: .type)
+        type = try values.decode(LocatedItemType.self, forKey: .type)
         switch type{
         case .audio:
             data = try values.decode(AudioItem.self, forKey: .data)
@@ -46,17 +46,17 @@ open class PlaceItemMetaData : Identifiable, Codable{
     
 }
 
-extension Array<PlaceItemMetaData>{
+extension Array<LocatedItemMetaData>{
     
-    public mutating func loadItemList(items: PlaceItemList){
+    public mutating func loadItemList(items: LocatedItemsList){
         removeAll()
         for i in 0..<items.count{
-            append(PlaceItemMetaData(item: items[i]))
+            append(LocatedItemMetaData(item: items[i]))
         }
     }
     
-    public func toItemList() -> PlaceItemList{
-        var items = PlaceItemList()
+    public func toItemList() -> LocatedItemsList{
+        var items = LocatedItemsList()
         for metaItem in self{
             items.append(metaItem.data)
         }

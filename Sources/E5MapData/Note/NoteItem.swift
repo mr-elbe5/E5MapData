@@ -6,13 +6,13 @@
 
 import Foundation
 
-open class NoteItem : PlaceItem{
+open class NoteItem : LocatedItem{
     
     private enum CodingKeys: CodingKey{
         case text
     }
     
-    override public var type : PlaceItemType{
+    override public var type : LocatedItemType{
         .note
     }
     

@@ -9,7 +9,7 @@ import CloudKit
 
 extension CKRecord{
     
-    static var placeType: CKRecord.RecordType = "place"
+    static var locationType: CKRecord.RecordType = "place"
     static var fileType: CKRecord.RecordType = "file"
     
     func string(_ key: String) -> String?{

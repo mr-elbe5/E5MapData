@@ -17,7 +17,7 @@ open class ImageItem : FileItem{
         case metaData
     }
     
-    override public var type : PlaceItemType{
+    override public var type : LocatedItemType{
         .image
     }
     

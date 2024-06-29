@@ -7,7 +7,7 @@
 import Foundation
 import E5Data
 
-public enum PlaceItemType: String, Codable{
+public enum LocatedItemType: String, Codable{
     case audio
     case image
     case video
@@ -15,13 +15,13 @@ public enum PlaceItemType: String, Codable{
     case note
 }
 
-open class PlaceItem : UUIDObject, Comparable{
+open class LocatedItem : UUIDObject, Comparable{
 
-    public static func == (lhs: PlaceItem, rhs: PlaceItem) -> Bool {
+    public static func == (lhs: LocatedItem, rhs: LocatedItem) -> Bool {
         lhs.id == rhs.id
     }
     
-    public static func < (lhs: PlaceItem, rhs: PlaceItem) -> Bool {
+    public static func < (lhs: LocatedItem, rhs: LocatedItem) -> Bool {
         AppState.shared.sortAscending ? lhs.creationDate < rhs.creationDate : lhs.creationDate > rhs.creationDate
     }
     
@@ -30,14 +30,14 @@ open class PlaceItem : UUIDObject, Comparable{
     }
     
     public var creationDate : Date
-    public var type: PlaceItemType{
+    public var type: LocatedItemType{
         get{
             fatalError("not implemented")
         }
     }
     
     //runtime
-    public var place: Place!
+    public var location: Location!
     
     override public init(){
         creationDate = Date.localDate

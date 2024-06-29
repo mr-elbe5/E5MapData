@@ -16,7 +16,7 @@ open class AudioItem : FileItem{
     
     public var time: Double
     
-    override public var type : PlaceItemType{
+    override public var type : LocatedItemType{
         get{
             return .audio
         }
