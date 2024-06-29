@@ -64,7 +64,7 @@ open class AppData{
     
     // local persistance
     
-    public func loadLocally(){
+    public func load(){
         if let list : LocationList = UserDefaults.standard.load(forKey: AppData.storeKey){
             locations = list
         }
@@ -73,7 +73,7 @@ open class AppData{
         }
     }
     
-    public func saveLocally(){
+    public func save(){
         UserDefaults.standard.save(forKey: AppData.storeKey, value: locations)
     }
     

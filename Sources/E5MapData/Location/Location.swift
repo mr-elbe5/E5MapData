@@ -176,16 +176,16 @@ open class Location : UUIDObject, Comparable{
     }
     
     public func evaluatePlacemark(){
-        print("getting placemark for \(name)")
-        PlacemarkService.shared.getPlacemark(for: CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)){ result in
+        //print("getting placemark for \(name)")
+        CLPlacemark.getPlacemark(for: CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)){ result in
             if let placemark = result{
                 self.name = placemark.nameString ?? ""
-                print("name is \(self.name)")
+                //Log.debug("name is \(self.name)")
                 self.address = placemark.locationString
-                AppData.shared.saveLocally()
+                AppData.shared.save()
             }
             else{
-                print("no result")
+                Log.error("no placemark result for \(self.name)")
             }
         }
     }

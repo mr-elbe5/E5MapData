@@ -14,9 +14,9 @@ open class CloudSynchronizer{
     }
     
     public func synchronizeICloud(replaceLocalData: Bool, replaceICloudData: Bool) async throws{
-        AppData.shared.saveLocally()
+        AppData.shared.save()
         try await synchronizeFromICloud(deleteLocalData: replaceLocalData)
-        AppData.shared.saveLocally()
+        AppData.shared.save()
         try await synchronizeToICloud(deleteICloudData: replaceICloudData)
     }
     

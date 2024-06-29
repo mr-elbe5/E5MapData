@@ -67,7 +67,7 @@ open class Backup{
         }
         let url = FileManager.tempURL.appendingPathComponent(AppData.storeKey + ".json")
         AppData.shared.loadFromFile(url: url)
-        AppData.shared.saveLocally()
+        AppData.shared.save()
         count = FileManager.default.deleteTemporaryFiles()
         if count > 0{
             Log.info("\(count) temporary files deleted after restore")
