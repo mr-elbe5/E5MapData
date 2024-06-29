@@ -31,24 +31,6 @@ extension LocationList{
         }
     }
     
-    public var filteredLocations : LocationList{
-        switch AppState.shared.locationFilter{
-        case .all: return self
-        case .media:
-            return self.filter({
-                $0.hasMedia
-            })
-        case .track:
-            return self.filter({
-                $0.hasTrack
-            })
-        case .note:
-            return self.filter({
-                $0.hasNote
-            })
-        }
-    }
-    
     public var trackItems: Array<TrackItem>{
         get{
             var trackList = Array<TrackItem>()

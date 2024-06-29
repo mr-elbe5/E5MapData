@@ -29,7 +29,6 @@ open class AppState: Identifiable, Codable{
         case longitude
         case showLocations
         case showCross
-        case locationFilter
         case searchString
         case searchTarget
         case searchRegion
@@ -43,7 +42,6 @@ open class AppState: Identifiable, Codable{
     public var coordinate : CLLocationCoordinate2D
     public var showLocations : Bool = true
     public var showCross : Bool = false
-    public var locationFilter : LocationFilter = .all
     public var searchString : String = ""
     public var searchTarget : SearchQuery.SearchTarget = .any
     public var searchRegion : SearchQuery.SearchRegion = .unlimited
@@ -70,8 +68,6 @@ open class AppState: Identifiable, Codable{
         }
         showLocations = try values.decodeIfPresent(Bool.self, forKey: .showLocations) ?? true
         showCross = try values.decodeIfPresent(Bool.self, forKey: .showCross) ?? false
-        let s = try values.decodeIfPresent(String.self, forKey: .locationFilter) ?? LocationFilter.all.rawValue
-        locationFilter = LocationFilter(rawValue: s) ?? .all
         searchString = try values.decodeIfPresent(String.self, forKey: .searchString) ?? ""
         var i = try values.decodeIfPresent(Int.self, forKey: .searchTarget) ?? 0
         searchTarget = SearchQuery.SearchTarget(rawValue: i) ?? .any
@@ -90,7 +86,6 @@ open class AppState: Identifiable, Codable{
         try container.encode(coordinate.longitude, forKey: .longitude)
         try container.encode(showLocations, forKey: .showLocations)
         try container.encode(showCross, forKey: .showCross)
-        try container.encode(locationFilter.rawValue, forKey: .locationFilter)
         try container.encode(searchString, forKey: .searchString)
         try container.encode(searchTarget.rawValue, forKey: .searchTarget)
         try container.encode(searchRegion.rawValue, forKey: .searchRegion)
