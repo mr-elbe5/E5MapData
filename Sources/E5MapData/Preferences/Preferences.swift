@@ -29,7 +29,6 @@ open class Preferences: Identifiable, Codable{
     
     public static var defaultMaxSearchResults: Int = 5
     
-    public static var defaultUseICloud = false
     public static var defaultDeleteLocalDataOnDownload = false
     public static var defaultDeleteICloudDataOnUpload = true
     
@@ -44,7 +43,6 @@ open class Preferences: Identifiable, Codable{
         case maxTrackpointInLineDeviation
         case maxSearchResults
         case maxLocationMergeDistance
-        case useICloud
     }
 
     public var urlTemplate : String = osmUrl
@@ -58,7 +56,6 @@ open class Preferences: Identifiable, Codable{
     public var maxTrackpointInLineDeviation = defaultMaxTrackpointInLineDeviation
     public var maxSearchResults = defaultMaxSearchResults
     public var maxLocationMergeDistance: Double = defaultMaxLocationMergeDistance
-    public var useICloud: Bool = defaultUseICloud
     
     public init(){
     }
@@ -74,7 +71,6 @@ open class Preferences: Identifiable, Codable{
         maxTrackpointInLineDeviation = try values.decodeIfPresent(Double.self, forKey: .maxTrackpointInLineDeviation) ?? Preferences.defaultMaxTrackpointInLineDeviation
         maxSearchResults = try values.decodeIfPresent(Int.self, forKey: .maxSearchResults) ?? Preferences.defaultMaxSearchResults
         maxLocationMergeDistance = try values.decodeIfPresent(Double.self, forKey: .maxLocationMergeDistance) ?? Preferences.defaultMaxLocationMergeDistance
-        useICloud = try values.decodeIfPresent(Bool.self, forKey: .useICloud) ?? Preferences.defaultUseICloud
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -87,7 +83,6 @@ open class Preferences: Identifiable, Codable{
         try container.encode(maxTrackpointInLineDeviation, forKey: .maxTrackpointInLineDeviation)
         try container.encode(maxSearchResults, forKey: .maxSearchResults)
         try container.encode(maxLocationMergeDistance, forKey: .maxLocationMergeDistance)
-        try container.encode(useICloud, forKey: .useICloud)
     }
     
     public func save(){
