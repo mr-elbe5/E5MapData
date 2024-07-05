@@ -6,7 +6,7 @@
 
 import Foundation
 
-open class NoteItem : LocatedItem{
+open class Note : LocatedItem{
     
     private enum CodingKeys: CodingKey{
         case text

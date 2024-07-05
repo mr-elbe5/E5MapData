@@ -7,7 +7,7 @@
 import CoreLocation
 import E5Data
 
-open class TrackItem : LocatedItem{
+open class Track : LocatedItem{
     
     private enum CodingKeys: String, CodingKey {
         case startTime
@@ -20,7 +20,7 @@ open class TrackItem : LocatedItem{
         case note
     }
     
-    public static var visibleTrack : TrackItem? = nil
+    public static var visibleTrack : Track? = nil
     
     public var startTime : Date
     public var pauseTime : Date? = nil
@@ -200,25 +200,6 @@ open class TrackItem : LocatedItem{
         let expectedCoordinate = CLLocationCoordinate2D(latitude: expectedLatitude, longitude: tp1.coordinate.longitude)
         //check for middle coordinate being close to expected coordinate
         return tp1.coordinate.distance(to: expectedCoordinate) <= Preferences.shared.maxTrackpointInLineDeviation
-    }
-    
-}
-
-public typealias TrackList = Array<TrackItem>
-
-extension TrackList{
-    
-    public mutating func remove(_ track: TrackItem){
-        for idx in 0..<self.count{
-            if self[idx].equals(track){
-                self.remove(at: idx)
-                return
-            }
-        }
-    }
-    
-    public mutating func sortByDate(){
-        self.sort(by: { $0.startTime < $1.startTime})
     }
     
 }

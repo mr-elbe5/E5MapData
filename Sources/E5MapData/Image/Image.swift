@@ -11,7 +11,7 @@ import UIKit
 #endif
 import E5Data
 
-open class ImageItem : FileItem{
+open class Image : FileItem{
     
     public enum CodingKeys: String, CodingKey {
         case metaData
@@ -67,11 +67,11 @@ open class ImageItem : FileItem{
     
 }
 
-public typealias ImageList = Array<ImageItem>
+public typealias ImageList = Array<Image>
 
 extension ImageList{
     
-    public mutating func remove(_ image: ImageItem){
+    public mutating func remove(_ image: Image){
         for idx in 0..<self.count{
             if self[idx].equals(image){
                 self.remove(at: idx)
