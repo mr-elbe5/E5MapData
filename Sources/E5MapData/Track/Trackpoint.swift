@@ -35,8 +35,6 @@ open class Trackpoint: Codable, Identifiable{
         coordinate = location.coordinate
         altitude = location.altitude
         timestamp = location.timestamp.toLocalDate()
-        TrackRecorder.instance?.speed = location.speed
-        TrackRecorder.instance?.horizontalAccuracy = location.horizontalAccuracy
     }
     
     required public init?(coder: NSCoder) {
