@@ -31,7 +31,7 @@ extension LocationList{
         }
     }
     
-    public var trackItems: Array<Track>{
+    public var tracks: Array<Track>{
         get{
             var trackList = Array<Track>()
             for location in self{
@@ -42,7 +42,7 @@ extension LocationList{
         }
     }
     
-    public var imageItems: Array<Image>{
+    public var images: Array<Image>{
         get{
             var imageList = Array<Image>()
             for location in self{
