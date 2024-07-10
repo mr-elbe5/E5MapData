@@ -12,10 +12,10 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://git.elbe5cloud.de/miro/E5Data",
+            url: "https://github.com/mr-elbe5/E5Data",
             "1.0.0"..<"1.0.100"),
         .package(
-            url: "https://git.elbe5cloud.de/miro/E5PhotoLib",
+            url: "https://github.com/mr-elbe5/E5PhotoLib",
             from: "1.0.0"),
         .package(
             url: "https://github.com/marmelroy/Zip",
