@@ -40,7 +40,7 @@ public struct World{
     }
     
     public static func zoomLevelFromScale(scale: CGFloat) -> Int{
-        Int(round(log2(scale)))
+        Int(floor(log2(scale)))
     }
     
     public static func zoomedWorld(zoom: Int) -> CGRect{
@@ -140,20 +140,9 @@ public struct World{
         round(projectedLatitude(latitude) * fullExtent * downScale)
     }
     
-    public static func getZoomScaleToFit(mapRect: CGRect, scaledBounds: CGRect) -> Double{
-        min(scaledBounds.size.width / mapRect.size.width, scaledBounds.size.height/mapRect.size.height)
-    }
-    
-    public static func getZoomScaleToFit(region: CoordinateRegion, scaledBounds: CGRect) -> Double{
-        getZoomScaleToFit(mapRect: region.mapRect, scaledBounds: scaledBounds)
-    }
-    
     public static func getZoomToFit(mapRect: CGRect, scaledBounds: CGRect) -> Int{
-        zoomLevelFromScale(scale: min(scaledBounds.size.width / mapRect.size.width, scaledBounds.size.height/mapRect.size.height))
-    }
-    
-    public static func getZoomToFit(region: CoordinateRegion, scaledBounds: CGRect) -> Int{
-        getZoomToFit(mapRect: region.mapRect, scaledBounds: scaledBounds)
+        let scaleDiff = min(scaledBounds.size.width / mapRect.size.width, scaledBounds.size.height/mapRect.size.height)
+        return World.maxZoom + zoomLevelFromScale(scale: scaleDiff)
     }
     
 }

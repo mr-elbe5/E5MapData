@@ -24,7 +24,6 @@ open class AppState: Identifiable, Codable{
     public enum CodingKeys: String, CodingKey {
         case version
         case zoom
-        case scale
         case latitude
         case longitude
         case showLocations
@@ -38,7 +37,6 @@ open class AppState: Identifiable, Codable{
 
     public var version: Int
     public var zoom : Int
-    public var scale : Double
     public var coordinate : CLLocationCoordinate2D
     public var showLocations : Bool = true
     public var showCross : Bool = false
@@ -51,7 +49,6 @@ open class AppState: Identifiable, Codable{
     public init(){
         version = 1
         self.zoom = AppState.startZoom
-        self.scale = AppState.startScale
         self.coordinate = AppState.startCoordinate
     }
 
@@ -59,7 +56,6 @@ open class AppState: Identifiable, Codable{
         let values = try decoder.container(keyedBy: CodingKeys.self)
         version = try values.decodeIfPresent(Int.self, forKey: .version) ?? 1
         zoom = try values.decodeIfPresent(Int.self, forKey: .zoom) ?? AppState.startZoom
-        scale = try values.decodeIfPresent(Double.self, forKey: .scale) ?? AppState.startScale
         if let lat = try values.decodeIfPresent(Double.self, forKey: .latitude), let lon = try values.decodeIfPresent(Double.self, forKey: .longitude){
             coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
         }
@@ -81,7 +77,6 @@ open class AppState: Identifiable, Codable{
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(version, forKey: .version)
         try container.encode(zoom, forKey: .zoom)
-        try container.encode(scale, forKey: .scale)
         try container.encode(coordinate.latitude, forKey: .latitude)
         try container.encode(coordinate.longitude, forKey: .longitude)
         try container.encode(showLocations, forKey: .showLocations)
@@ -96,7 +91,6 @@ open class AppState: Identifiable, Codable{
     public func resetPosition(){
         coordinate = AppState.startCoordinate
         zoom = AppState.startZoom
-        scale = AppState.startScale
     }
     
     public func save(){
