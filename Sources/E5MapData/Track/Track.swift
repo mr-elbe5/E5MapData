@@ -33,6 +33,8 @@ open class Track : LocatedItem{
     public var downDistance : CGFloat
     public var note : String
     
+    public var lastAltitude = 0.0
+    
     override public var type : LocatedItemType{
         get{
             return .track
@@ -143,33 +145,45 @@ open class Track : LocatedItem{
         let tp = Trackpoint(location: location)
         if trackpoints.isEmpty{
             trackpoints.append(tp)
+            Log.info("starting track at \(tp.coordinate.shortString)")
             startTime = tp.timestamp
+            lastAltitude = tp.altitude
             return
         }
         let previousTrackpoint = trackpoints.last!
         let timeDiff = previousTrackpoint.timestamp.distance(to: tp.timestamp)
         //print (timeDiff)
         if timeDiff < Preferences.shared.trackpointInterval{
+            Log.debug("dropping trackpoint at \(tp.coordinate.shortString) (reason: time interval < \(timeDiff) s")
             return
         }
         let horizontalDiff = previousTrackpoint.coordinate.distance(to: tp.coordinate)
         if horizontalDiff < Preferences.shared.minHorizontalTrackpointDistance{
+            Log.debug("dropping trackpoint at \(tp.coordinate.shortString) (reason: distance < \(horizontalDiff) m")
             return
         }
-        let verticalDiff = previousTrackpoint.altitude - tp.altitude
+        Log.info("adding trackpoint at \(tp.coordinate.shortString)")
         trackpoints.append(tp)
         distance += horizontalDiff
-        if verticalDiff > 0{
+        let verticalDiff = lastAltitude - tp.altitude
+        Log.debug("vertical distance: \(verticalDiff) m")
+        if verticalDiff > Preferences.shared.minVerticalTrackpointDistance{
             upDistance += verticalDiff
+            lastAltitude = tp.altitude
         }
-        else if verticalDiff < 0{
+        else if verticalDiff < -Preferences.shared.minVerticalTrackpointDistance{
             downDistance += -verticalDiff
+            lastAltitude = tp.altitude
+        }
+        else{
+            Log.debug("dropped vertical distance, reason: < \(Preferences.shared.minVerticalTrackpointDistance)")
         }
         endTime = tp.timestamp
     }
     
     public func simplifyTrack(){
         Log.info("simplifying track starting with \(trackpoints.count) trackpoints")
+        Log.info("using max deviation of \(Preferences.shared.maxTrackpointInLineDeviation) m")
         var i = 0
         while i + 2 < trackpoints.count{
             if canDropMiddleTrackpoint(tp0: trackpoints[i], tp1: trackpoints[i+1], tp2: trackpoints[i+2]){
