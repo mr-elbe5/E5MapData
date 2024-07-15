@@ -154,29 +154,27 @@ open class Track : LocatedItem{
         let timeDiff = previousTrackpoint.timestamp.distance(to: tp.timestamp)
         //print (timeDiff)
         if timeDiff < Preferences.shared.trackpointInterval{
-            Log.debug("dropping trackpoint at \(tp.coordinate.shortString) (reason: time interval < \(timeDiff) s")
             return
         }
         let horizontalDiff = previousTrackpoint.coordinate.distance(to: tp.coordinate)
         if horizontalDiff < Preferences.shared.minHorizontalTrackpointDistance{
-            Log.debug("dropping trackpoint at \(tp.coordinate.shortString) (reason: distance < \(horizontalDiff) m")
             return
         }
         Log.info("adding trackpoint at \(tp.coordinate.shortString)")
         trackpoints.append(tp)
         distance += horizontalDiff
         let verticalDiff = lastAltitude - tp.altitude
-        Log.debug("vertical distance: \(verticalDiff) m")
         if verticalDiff > Preferences.shared.minVerticalTrackpointDistance{
             upDistance += verticalDiff
             lastAltitude = tp.altitude
+            Log.debug("new altitude: \(lastAltitude)")
+            Log.debug("new up distance: \(upDistance) m")
         }
         else if verticalDiff < -Preferences.shared.minVerticalTrackpointDistance{
             downDistance += -verticalDiff
             lastAltitude = tp.altitude
-        }
-        else{
-            Log.debug("dropped vertical distance, reason: < \(Preferences.shared.minVerticalTrackpointDistance)")
+            Log.debug("new altitude: \(lastAltitude)")
+            Log.debug("new down distance: \(downDistance) m")
         }
         endTime = tp.timestamp
     }
