@@ -41,7 +41,7 @@ public struct TileProvider{
                 statusCode = httpResponse.statusCode
             }
             if statusCode == 200, let data = data{
-                //debug("TileProvider loaded \(tile.shortDescription)")
+                Log.debug("TileProvider loaded tile \(tile.shortDescription)")
                 if tries > 1{
                     Log.info("TileProvider got tile in try \(tries)")
                 }
