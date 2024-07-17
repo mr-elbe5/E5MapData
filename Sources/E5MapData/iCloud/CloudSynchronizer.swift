@@ -8,7 +8,7 @@ import Foundation
 import CloudKit
 import E5Data
 
-protocol CloudSynchronizerDelegate{
+public protocol CloudSynchronizerDelegate{
     func setMaxSteps(_ value: Int)
     func nextStep()
 }
