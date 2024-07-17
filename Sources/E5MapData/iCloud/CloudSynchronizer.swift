@@ -8,9 +8,22 @@ import Foundation
 import CloudKit
 import E5Data
 
+protocol CloudSynchronizerDelegate{
+    func setMaxSteps(_ value: Int)
+    func nextStep()
+}
+
 open class CloudSynchronizer{
     
+    var delegate: CloudSynchronizerDelegate? = nil
+    
     public init(){
+    }
+    
+    func sendNextStep(){
+        DispatchQueue.main.async {
+            self.delegate?.nextStep()
+        }
     }
     
     public func synchronizeICloud(replaceLocalData: Bool, replaceICloudData: Bool) async throws{
@@ -24,10 +37,10 @@ open class CloudSynchronizer{
         Log.info("synchronizing from iCloud")
         Log.info("starting download with \(AppData.shared.locations.count) locations and \(AppData.shared.locations.fileItems.count) files")
         if try await CKContainer.isConnected(), let remoteLocations = try await getRemoteLocations(){
-            //Log.debug("synchronize locations from iCloud")
+            Log.debug("synchronize locations from iCloud")
             let remoteFileMetaDataMap = await getRemoteFileMetaData()
             //locations
-            //Log.debug("received \(remoteLocations.count) icloud locations")
+            Log.debug("received \(remoteLocations.count) icloud locations")
             var oldLocalFileItems = FileItemList()
             oldLocalFileItems.append(contentsOf: AppData.shared.locations.fileItems)
             //setup local locations
@@ -38,11 +51,11 @@ open class CloudSynchronizer{
             else{
                 for location in AppData.shared.locations{
                     if remoteLocations.containsEqual(location){
-                        //Log.debug("local location \(location.id) will be replaced")
+                        Log.debug("local location \(location.id) will be replaced")
                         AppData.shared.locations.remove(obj: location)
                     }
                     else{
-                        //Log.debug("remote \(location.id) will be added locally")
+                        Log.debug("remote \(location.id) will be added locally")
                     }
                 }
                 AppData.shared.locations.append(contentsOf: remoteLocations)
@@ -54,18 +67,26 @@ open class CloudSynchronizer{
                     fileItem.prepareDelete()
                 }
                 else{
-                    //Log.debug("local file \(fileItem.id) does not need download")
+                    Log.debug("local file \(fileItem.id) does not need download")
                 }
+            }
+            
+            DispatchQueue.main.async {
+                self.delegate?.setMaxSteps( newLocalFileItems.count)
             }
             for fileItem in newLocalFileItems{
                 if !oldLocalFileItems.containsEqual(fileItem), remoteFileMetaDataMap.keys.contains(fileItem.id) {
                     Log.info("downloading remote file \(fileItem.id)")
                     if let fileDataRecord = try await getRemoteFileData(metaRecord: remoteFileMetaDataMap[fileItem.id]!){
                         downloadFile(record: fileDataRecord, fileItem: fileItem)
+                        self.sendNextStep()
                     }
                     else{
                         Log.error("could not download file \(fileItem.id)")
                     }
+                }
+                else{
+                    self.sendNextStep()
                 }
             }
             AppData.shared.locations.sortAll()
@@ -85,7 +106,7 @@ open class CloudSynchronizer{
             let oldRemoteLocationIds = await getRemoteLocationIds()
             let oldRemoteFileMetaData = await getRemoteFileMetaData()
             //locations
-            //Log.debug("getting \(oldRemoteLocationIds.count) remote locations")
+            Log.debug("getting \(oldRemoteLocationIds.count) remote locations")
             //setup remote locations
             if deleteICloudData{
                 for uuid in oldRemoteLocationIds{
@@ -132,7 +153,12 @@ open class CloudSynchronizer{
                 Log.info("setting \(recordsToDelete.count) record(s) for delete from iCloud")
             }
             if recordsToSave.count > 0 || recordsToDelete.count > 0{
+                DispatchQueue.main.async {
+                    self.delegate?.setMaxSteps(2)
+                    self.sendNextStep()
+                }
                 try await modifyRecords(recordsToSave: recordsToSave, recordIdsToDelete: recordsToDelete)
+                sendNextStep()
             }
         }
         else{
@@ -141,11 +167,15 @@ open class CloudSynchronizer{
     }
     
     public func cleanupICloud() async throws{
-        //Log.debug("cleanup iCloud")
+        Log.debug("cleanup iCloud")
         if try await CKContainer.isConnected(), let remoteLocations = try await getRemoteLocations(){
             let remoteFileMetaDataMap = await getRemoteFileMetaData()
             let recordIdsToDelete = getUnreferencedRecordIds(allFiles: remoteFileMetaDataMap, fileItems: remoteLocations.fileItems)
             if !recordIdsToDelete.isEmpty{
+                DispatchQueue.main.async {
+                    self.delegate?.setMaxSteps(2)
+                    self.sendNextStep()
+                }
                 try await modifyRecords(recordsToSave: [], recordIdsToDelete: recordIdsToDelete)
             }
         }
@@ -154,7 +184,7 @@ open class CloudSynchronizer{
     // private funcs
     
     private func getRemoteLocations() async throws -> LocationList?{
-        //Log.debug("get remote locations")
+        Log.debug("get remote locations")
         var locations = LocationList()
         let query = CKQuery(recordType: CKRecord.locationType, predicate: NSPredicate(format: "json != ''"))
         let records = try await CKContainer.privateDatabase.records(matching: query, desiredKeys: Location.recordDataKeys)
@@ -194,7 +224,7 @@ open class CloudSynchronizer{
     }
     
     private func getRemoteLocationIds() async -> Array<UUID>{
-        //Log.debug("getting remote location ids")
+        Log.debug("getting remote location ids")
         var list = Array<UUID>()
         let query = CKQuery(recordType: CKRecord.locationType, predicate: NSPredicate(format: "uuid != ''"))
         do{
@@ -210,7 +240,7 @@ open class CloudSynchronizer{
                     }
                 }
             }
-            //Log.debug("\(list.count) remote location ids received")
+            Log.debug("\(list.count) remote location ids received")
             return list
         }
         catch (let err){
@@ -225,7 +255,7 @@ open class CloudSynchronizer{
         let query = CKQuery(recordType: CKRecord.fileType, predicate: NSPredicate(format: "uuid != ''"))
         do{
             let records = try await CKContainer.privateDatabase.records(matching: query, desiredKeys: FileItem.recordMetaKeys)
-            //Log.debug("\(records.matchResults.count) remote file meta data received")
+            Log.debug("\(records.matchResults.count) remote file meta data received")
             for matchResult in records.matchResults{
                 let result = matchResult.1
                 switch result{
@@ -290,7 +320,7 @@ open class CloudSynchronizer{
     }
     
     private func downloadFile(record: CKRecord, fileItem: FileItem){
-        //Log.debug("downloading file \(fileItem.id)")
+        Log.debug("downloading file \(fileItem.id)")
         if let asset = record.asset("asset"), let sourceURL = asset.fileURL{
             if FileManager.default.copyFile(fromURL: sourceURL, toURL: fileItem.fileURL, replace: true){
                 //Log.debug("download succeeded for \(fileItem.fileURL.lastPathComponent)")
@@ -310,8 +340,8 @@ open class CloudSynchronizer{
             switch saveResult.value{
             case .failure(let err):
                 Log.error(error: err)
-            case .success(_):
-                //Log.debug("saved \(result.recordID.recordName) to iCloud")
+            case .success(let result):
+                Log.debug("saved \(result.recordID.recordName) to iCloud")
                 break
             }
         }
@@ -323,7 +353,7 @@ open class CloudSynchronizer{
             case .failure(let err):
                 Log.error(error: err)
             case .success():
-                //Log.debug("deleted \(deleteResult.key.recordName) from iCloud")
+                Log.debug("deleted \(deleteResult.key.recordName) from iCloud")
                 break
             }
         }
