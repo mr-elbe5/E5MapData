@@ -12,10 +12,10 @@ extension CKContainer{
     
     static var mapsForOSMContainerName = "iCloud.MapsForOSM"
     
-    static var container = CKContainer(identifier: mapsForOSMContainerName)
-    static var privateDatabase = container.privateCloudDatabase
+    static public var container = CKContainer(identifier: mapsForOSMContainerName)
+    static public var privateDatabase = container.privateCloudDatabase
     
-    static func isConnected() async throws -> Bool{
+    static public func isConnected() async throws -> Bool{
         let status = try await container.accountStatus()
         Log.info("account status = \(status == .available ? "connected" : "disconnected")")
         return status == .available
