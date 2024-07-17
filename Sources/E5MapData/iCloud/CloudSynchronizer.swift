@@ -15,7 +15,7 @@ public protocol CloudSynchronizerDelegate{
 
 open class CloudSynchronizer{
     
-    var delegate: CloudSynchronizerDelegate? = nil
+    public var delegate: CloudSynchronizerDelegate? = nil
     
     public init(){
     }
