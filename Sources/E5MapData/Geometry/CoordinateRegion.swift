@@ -17,12 +17,6 @@ open class CoordinateRegion{
         CLLocationCoordinate2D(latitude: (minLatitude + maxLatitude)/2, longitude: (minLongitude + maxLongitude)/2)
     }
     
-    public var mapRect : CGRect{
-        let topLeft = CGPoint(CLLocationCoordinate2D(latitude: maxLatitude, longitude: minLongitude))
-        let bottomRight = CGPoint(CLLocationCoordinate2D(latitude: minLatitude, longitude: maxLongitude))
-        return CGRect(origin: CGPoint(x: topLeft.x, y: topLeft.y), size: CGSize(width: bottomRight.x - topLeft.x, height: topLeft.y - bottomRight.y))
-    }
-    
     public init(topLeft: CLLocationCoordinate2D, bottomRight: CLLocationCoordinate2D){
         maxLatitude = topLeft.latitude
         minLatitude = bottomRight.latitude
