@@ -73,7 +73,7 @@ open class Preferences: Identifiable, Codable{
         maxLocationMergeDistance = try values.decodeIfPresent(Double.self, forKey: .maxLocationMergeDistance) ?? Preferences.defaultMaxLocationMergeDistance
     }
     
-    public func encode(to encoder: Encoder) throws {
+    open func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(urlTemplate, forKey: .urlTemplate)
         try container.encode(followTrack, forKey: .followTrack)
@@ -85,7 +85,7 @@ open class Preferences: Identifiable, Codable{
         try container.encode(maxLocationMergeDistance, forKey: .maxLocationMergeDistance)
     }
     
-    public func save(){
+    open func save(){
         UserDefaults.standard.save(forKey: Preferences.storeKey, value: self)
     }
     

@@ -93,7 +93,7 @@ open class AppState: Identifiable, Codable{
         zoom = AppState.startZoom
     }
     
-    public func save(){
+    open func save(){
         UserDefaults.standard.save(forKey: AppState.storeKey, value: self)
     }
     

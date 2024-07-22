@@ -64,7 +64,7 @@ open class AppData{
     
     // local persistance
     
-    public func load(){
+    open func load(){
         if let list : LocationList = UserDefaults.standard.load(forKey: AppData.storeKey){
             locations = list
         }
@@ -73,13 +73,13 @@ open class AppData{
         }
     }
     
-    public func save(){
+    open func save(){
         UserDefaults.standard.save(forKey: AppData.storeKey, value: locations)
     }
     
     // file persistance
     
-    public func saveAsFile() -> URL?{
+    open func saveAsFile() -> URL?{
         let value = locations.toJSON()
         let url = FileManager.tempURL.appendingPathComponent(AppData.storeKey + ".json")
         if FileManager.default.saveFile(text: value, url: url){
@@ -88,13 +88,13 @@ open class AppData{
         return nil
     }
     
-    public func loadFromFile(url: URL){
+    open func loadFromFile(url: URL){
         if let string = FileManager.default.readTextFile(url: url),let data : LocationList = LocationList.fromJSON(encoded: string){
             locations = data
         }
     }
     
-    public func cleanupFiles(){
+    open func cleanupFiles(){
         let fileURLs = FileManager.default.listAllURLs(dirURL: FileManager.mediaDirURL)
         var itemURLs = Array<URL>()
         var count = 0
