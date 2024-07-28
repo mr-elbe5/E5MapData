@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mr-elbe5/E5Data",
       "state" : {
-        "revision" : "779fe8873c41c5895fedf163331d1436eaaaa60c",
-        "version" : "1.0.27"
+        "revision" : "0fc486df977d924f3a0f7f509c58653888cd06e4",
+        "version" : "1.0.29"
       }
     },
     {
