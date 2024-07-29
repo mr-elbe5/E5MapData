@@ -11,31 +11,30 @@ import E5Data
 
 open class Backup{
     
-    public static func createBackupFile(name: String) -> URL?{
+    public static func createBackupFile(at url: URL) -> Bool{
         do {
             let count = FileManager.default.deleteTemporaryFiles()
             if count > 0{
                 Log.info("\(count) temporary files deleted before backup")
             }
             var paths = Array<URL>()
-            let zipFileURL = FileManager.backupDirURL.appendingPathComponent(name)
             paths.append(FileManager.mediaDirURL)
             if let url = AppData.shared.saveAsFile(){
                 paths.append(url)
             }
             else{
                 Log.error("could not create zip file: could not save json")
-                return nil
+                return false
             }
-            try Zip.zipFiles(paths: paths, zipFilePath: zipFileURL, password: nil, progress: { (progress) -> () in
+            try Zip.zipFiles(paths: paths, zipFilePath: url, password: nil, progress: { (progress) -> () in
                 //Log.debug(progress)
             })
-            return zipFileURL
+            return true
         }
         catch let err {
             Log.error("could not create zip file: \(err.localizedDescription)")
         }
-        return nil
+        return false
     }
     
     public static func unzipBackupFile(zipFileURL: URL) -> Bool{
