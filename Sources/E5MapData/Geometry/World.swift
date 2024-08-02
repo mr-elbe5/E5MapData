@@ -140,8 +140,8 @@ public struct World{
         round(projectedLatitude(latitude) * fullExtent * downScale)
     }
     
-    public static func getZoomToFit(mapRect: CGRect, scaledBounds: CGRect) -> Int{
-        let scaleDiff = min(scaledBounds.size.width / mapRect.size.width, scaledBounds.size.height/mapRect.size.height)
+    public static func getZoomToFit(mapRect: CGRect, scaledSize: CGSize) -> Int{
+        let scaleDiff = min(scaledSize.width/mapRect.size.width, scaledSize.height/scaledSize.height)
         return World.maxZoom + zoomLevelFromScale(scale: scaleDiff)
     }
     
