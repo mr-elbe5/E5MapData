@@ -141,7 +141,7 @@ public struct World{
     }
     
     public static func getZoomToFit(mapRect: CGRect, scaledSize: CGSize) -> Int{
-        let scaleDiff = min(scaledSize.width/mapRect.size.width, scaledSize.height/scaledSize.height)
+        let scaleDiff = min(scaledSize.width/mapRect.size.width, scaledSize.height/mapRect.size.height)
         return World.maxZoom + zoomLevelFromScale(scale: scaleDiff)
     }
     
