@@ -11,18 +11,18 @@ import UIKit
 #endif
 import E5Data
 
-class DrawTileData{
+public class DrawTileData{
     
-    var drawRect: CGRect
-    var tile: MapTile
-    var complete = false
+    public var drawRect: CGRect
+    public var tile: MapTile
+    public var complete = false
     
-    init(drawRect: CGRect, tile: MapTile){
+    public init(drawRect: CGRect, tile: MapTile){
         self.drawRect = drawRect
         self.tile = tile
     }
     
-    func assertTileImage(){
+    public func assertTileImage(){
         if tile.image == nil {
             TileProvider.shared.loadTileImage(tile: tile, template: Preferences.shared.urlTemplate){ success in
                 if success{
@@ -35,7 +35,7 @@ class DrawTileData{
         }
     }
     
-    func draw(){
+    public func draw(){
         if let image = tile.image{
             image.draw(in: drawRect)
         }
@@ -43,11 +43,11 @@ class DrawTileData{
     
 }
 
-typealias DrawTileList = Array<DrawTileData>
+public typealias DrawTileList = Array<DrawTileData>
 
 extension DrawTileList{
     
-    var complete: Bool{
+    public var complete: Bool{
         for drawTile in self{
             if !drawTile.complete{
                 return false
@@ -56,14 +56,14 @@ extension DrawTileList{
         return true
     }
     
-    func assertDrawTileImages() -> Bool{
+    public func assertDrawTileImages() -> Bool{
         for drawTile in self{
             drawTile.assertTileImage()
         }
         return complete
     }
     
-    func draw(){
+    public func draw(){
         for drawTile in self{
             drawTile.draw()
         }
