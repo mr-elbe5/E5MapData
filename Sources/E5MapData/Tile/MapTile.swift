@@ -1,8 +1,9 @@
 /*
- IOS Basics
- Basic classes and extensions for reuse
+ E5MapData
+ App for display and use of OSM maps without MapKit
  Copyright: Michael Rönnau mr@elbe5.de
  */
+
 #if os(macOS)
 import AppKit
 #elseif os(iOS)
@@ -11,8 +12,6 @@ import UIKit
 import E5Data
 
 open class MapTile{
-    
-    
     
 #if os(macOS)
     public static func getTile(data: MapTileData) -> MapTile{
