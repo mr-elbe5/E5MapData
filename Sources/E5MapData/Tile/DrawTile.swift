@@ -47,6 +47,25 @@ public typealias DrawTileList = Array<DrawTileData>
 
 extension DrawTileList{
     
+    public static func getDrawTiles(size: CGSize, zoom: Int, downScale: CGFloat, scaledWorldViewRect: CGRect) -> DrawTileList{
+        let tileExtent = World.tileSize.width
+        let minTileX = Int(floor(scaledWorldViewRect.minX/tileExtent))
+        let minTileY = Int(floor(scaledWorldViewRect.minY/tileExtent))
+        let maxTileX = minTileX + Int(size.width/tileExtent) + 1
+        let maxTileY = minTileY + Int(size.height/tileExtent) + 1
+        var drawTileList = DrawTileList()
+        var drawRect = CGRect()
+        for x in minTileX...maxTileX{
+            for y in Int(minTileY)...maxTileY{
+                drawRect = CGRect(x: Double(x)*tileExtent - scaledWorldViewRect.minX, y: Double(y)*tileExtent - scaledWorldViewRect.minY, width: tileExtent, height: tileExtent)
+                let tileData = MapTileData(zoom: zoom, x: x, y: y)
+                let tile = MapTile.getTile(data: tileData)
+                drawTileList.append(DrawTileData(drawRect: drawRect, tile: tile))
+            }
+        }
+        return drawTileList
+    }
+    
     public var complete: Bool{
         for drawTile in self{
             if !drawTile.complete{
