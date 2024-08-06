@@ -10,7 +10,6 @@ import AppKit
 import UIKit
 #endif
 import E5Data
-import UniformTypeIdentifiers
 
 open class Image : FileItem{
     
@@ -74,7 +73,7 @@ open class Image : FileItem{
         if let preview = PreviewCreator.createPreview(of: getImage()){
             let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
             if let tiff = preview.tiffRepresentation, let tiffData = NSBitmapImageRep(data: tiff) {
-                if let previewData = tiffData.representation(using: UTType.jpeg, properties: [:]) {
+                if let previewData = tiffData.representation(using: .jpeg, properties: [:]) {
                     FileManager.default.assertDirectoryFor(url: url)
                     FileManager.default.saveFile(data: previewData, url: url)
                     return preview
