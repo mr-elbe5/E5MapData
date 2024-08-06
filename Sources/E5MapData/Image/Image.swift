@@ -13,6 +13,8 @@ import E5Data
 
 open class Image : FileItem{
     
+    public static var previewSize: CGFloat = 512
+    
     public enum CodingKeys: String, CodingKey {
         case metaData
     }
@@ -47,6 +49,11 @@ open class Image : FileItem{
         }
     }
     
+    public func getPreviewFile() -> Data?{
+        let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
+        return FileManager.default.readFile(url: url)
+    }
+    
 #if os(macOS)
     public func getImage() -> NSImage?{
         if let data = getFile(){
@@ -55,6 +62,26 @@ open class Image : FileItem{
             return nil
         }
     }
+    public func getPreview() -> NSImage?{
+        if let data = getPreviewFile(){
+            return NSImage(data: data)
+        } else{
+            return assertPreview()
+        }
+    }
+    public func assertPreview() -> NSImage?{
+        if let preview = PreviewCreator.createPreview(of: getImage()){
+            let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
+            if let tiff = preview.tiffRepresentation, let tiffData = NSBitmapImageRep(data: tiff) {
+                if let previewData = tiffData.representation(using: UTType.jpeg, properties: [:]) {
+                    FileController.assertDirectoryFor(url: url)
+                    return FileController.saveFile(data: previewData, url: url)
+                }
+            }
+            return preview
+        }
+        return nil
+    }
 #elseif os(iOS)
     public func getImage() -> UIImage?{
         if let data = getFile(){
@@ -62,6 +89,25 @@ open class Image : FileItem{
         } else{
             return nil
         }
+    }
+    public func getPreview() -> UIImage?{
+        if let data = getPreviewFile(){
+            return UIImage(data: data)
+        } else{
+            return assertPreview()
+        }
+    }
+    public func assertPreview() -> UIImage?{
+        if let preview = PreviewCreator.createPreview(of: getImage()){
+            let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
+            if let data = preview.jpegData(compressionQuality: 0.85){
+                if !FileManager.default.saveFile(data: data, url: url){
+                    Log.error("preview could not be saved at \(url)")
+                }
+            }
+            return preview
+        }
+        return nil
     }
 #endif
     

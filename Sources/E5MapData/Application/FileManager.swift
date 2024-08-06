@@ -10,6 +10,7 @@ import E5Data
 extension FileManager {
     
     public static var mediaDirURL : URL = privateURL.appendingPathComponent("media")
+    public static var previewsDirURL : URL = privateURL.appendingPathComponent("previews")
     public static var tilesDirURL : URL = privateURL.appendingPathComponent("tiles")
     
     public func logFileInfo(){
@@ -18,6 +19,10 @@ extension FileManager {
             print(name)
         }
         names = listAllFiles(dirPath: FileManager.mediaDirURL.path)
+        for name in names{
+            print(name)
+        }
+        names = listAllFiles(dirPath: FileManager.previewsDirURL.path)
         for name in names{
             print(name)
         }
