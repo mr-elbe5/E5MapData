@@ -12,17 +12,17 @@ import UIKit
 import E5Data
 import CoreLocation
 
-class TrackImageCreator{
+open class TrackImageCreator{
     
-    var track: Track
+    public var track: Track
     
-    init(track: Track){
+    public init(track: Track){
         self.track = track
     }
     
 #if os(macOS)
     
-    func createImage(size: NSSize) -> NSImage?{
+    public func createImage(size: NSSize) -> NSImage?{
         if track.trackpoints.isEmpty{
             return nil
         }
@@ -49,7 +49,7 @@ class TrackImageCreator{
         return img
     }
     
-    func drawTrack(ctx: CGContext, size: NSSize, zoom: Int, downScale: CGFloat, worldViewRect: CGRect) {
+    public func drawTrack(ctx: CGContext, size: NSSize, zoom: Int, downScale: CGFloat, worldViewRect: CGRect) {
         if !track.trackpoints.isEmpty{
             var drawPoints = Array<CGPoint>()
             for idx in 0..<track.trackpoints.count{
@@ -72,7 +72,7 @@ class TrackImageCreator{
     
 #elseif os(iOS)
     
-    func createImage(size: CGSize) -> UIImage?{
+    public func createImage(size: CGSize) -> UIImage?{
         if track.trackpoints.isEmpty{
             return nil
         }
@@ -98,7 +98,7 @@ class TrackImageCreator{
         return img
     }
     
-    func drawTrack(ctx: CGContext, size: CGSize, zoom: Int, downScale: CGFloat, worldViewRect: CGRect) {
+    public func drawTrack(ctx: CGContext, size: CGSize, zoom: Int, downScale: CGFloat, worldViewRect: CGRect) {
         if !track.trackpoints.isEmpty{
             var drawPoints = Array<CGPoint>()
             for idx in 0..<track.trackpoints.count{
