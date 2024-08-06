@@ -5,9 +5,16 @@
  */
 
 import CoreLocation
+#if os(macOS)
+import AppKit
+#elseif os(iOS)
+import UIKit
+#endif
 import E5Data
 
 open class Track : LocatedItem{
+    
+    public static var previewSize: CGFloat = 512
     
     private enum CodingKeys: String, CodingKey {
         case startTime
@@ -39,6 +46,10 @@ open class Track : LocatedItem{
         get{
             return .track
         }
+    }
+    
+    var fileName: String{
+        "track_\(id).jpg"
     }
     
     public var duration : TimeInterval{
@@ -213,6 +224,55 @@ open class Track : LocatedItem{
         //check for middle coordinate being close to expected coordinate
         return tp1.coordinate.distance(to: expectedCoordinate) <= Preferences.shared.maxTrackpointInLineDeviation
     }
+    
+    public func getPreviewFile() -> Data?{
+        let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
+        return FileManager.default.readFile(url: url)
+    }
+    
+#if os(macOS)
+    public func getPreview() -> NSImage?{
+        if let data = getPreviewFile(){
+            return NSImage(data: data)
+        } else{
+            return createPreview()
+        }
+    }
+    public func createPreview() -> NSImage?{
+        if let preview = TrackImageCreator(track: self).createImage(size: CGSize(width: Track.previewSize, height: Track.previewSize)){
+            let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
+            if let tiff = preview.tiffRepresentation, let tiffData = NSBitmapImageRep(data: tiff) {
+                if let previewData = tiffData.representation(using: .jpeg, properties: [:]) {
+                    FileManager.default.assertDirectoryFor(url: url)
+                    FileManager.default.saveFile(data: previewData, url: url)
+                    return preview
+                }
+            }
+            return preview
+        }
+        return nil
+    }
+#elseif os(iOS)
+    public func getPreview() -> UIImage?{
+        if let data = getPreviewFile(){
+            return UIImage(data: data)
+        } else{
+            return createPreview()
+        }
+    }
+    public func createPreview() -> UIImage?{
+        if let preview = TrackImageCreator(track: self).createImage(size: CGSize(width: Track.previewSize, height: Track.previewSize)){
+            let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
+            if let data = preview.jpegData(compressionQuality: 0.85){
+                if !FileManager.default.saveFile(data: data, url: url){
+                    Log.error("preview could not be saved at \(url)")
+                }
+            }
+            return preview
+        }
+        return nil
+    }
+#endif
     
 }
 
