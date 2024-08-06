@@ -10,6 +10,7 @@ import AppKit
 import UIKit
 #endif
 import E5Data
+import UniformTypeIdentifiers
 
 open class Image : FileItem{
     
@@ -66,16 +67,17 @@ open class Image : FileItem{
         if let data = getPreviewFile(){
             return NSImage(data: data)
         } else{
-            return assertPreview()
+            return createPreview()
         }
     }
-    public func assertPreview() -> NSImage?{
+    public func createPreview() -> NSImage?{
         if let preview = PreviewCreator.createPreview(of: getImage()){
             let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
             if let tiff = preview.tiffRepresentation, let tiffData = NSBitmapImageRep(data: tiff) {
                 if let previewData = tiffData.representation(using: UTType.jpeg, properties: [:]) {
-                    FileController.assertDirectoryFor(url: url)
-                    return FileController.saveFile(data: previewData, url: url)
+                    FileManager.default.assertDirectoryFor(url: url)
+                    FileManager.default.saveFile(data: previewData, url: url)
+                    return preview
                 }
             }
             return preview
@@ -94,10 +96,10 @@ open class Image : FileItem{
         if let data = getPreviewFile(){
             return UIImage(data: data)
         } else{
-            return assertPreview()
+            return createPreview()
         }
     }
-    public func assertPreview() -> UIImage?{
+    public func createPreview() -> UIImage?{
         if let preview = PreviewCreator.createPreview(of: getImage()){
             let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
             if let data = preview.jpegData(compressionQuality: 0.85){
