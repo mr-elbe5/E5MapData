@@ -52,6 +52,10 @@ open class Track : LocatedItem{
         "track_\(id).jpg"
     }
     
+    var previewURL: URL{
+        FileManager.previewsDirURL.appendingPathComponent(fileName)
+    }
+    
     public var duration : TimeInterval{
         if let pauseTime = pauseTime{
             return startTime.distance(to: pauseTime) - pauseLength
@@ -226,8 +230,13 @@ open class Track : LocatedItem{
     }
     
     public func getPreviewFile() -> Data?{
-        let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
-        return FileManager.default.readFile(url: url)
+        FileManager.default.readFile(url: previewURL)
+    }
+    
+    public func trackpointsChanged(){
+        if FileManager.default.fileExists(url: previewURL){
+            FileManager.default.deleteFile(url: previewURL)
+        }
     }
     
 #if os(macOS)
@@ -240,11 +249,10 @@ open class Track : LocatedItem{
     }
     public func createPreview() -> NSImage?{
         if let preview = TrackImageCreator(track: self).createImage(size: CGSize(width: Track.previewSize, height: Track.previewSize)){
-            let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
             if let tiff = preview.tiffRepresentation, let tiffData = NSBitmapImageRep(data: tiff) {
                 if let previewData = tiffData.representation(using: .jpeg, properties: [:]) {
-                    FileManager.default.assertDirectoryFor(url: url)
-                    FileManager.default.saveFile(data: previewData, url: url)
+                    _ = FileManager.default.assertDirectoryFor(url: previewURL)
+                    FileManager.default.saveFile(data: previewData, url: previewURL)
                     return preview
                 }
             }
@@ -262,10 +270,10 @@ open class Track : LocatedItem{
     }
     public func createPreview() -> UIImage?{
         if let preview = TrackImageCreator(track: self).createImage(size: CGSize(width: Track.previewSize, height: Track.previewSize)){
-            let url = FileManager.previewsDirURL.appendingPathComponent(fileName)
             if let data = preview.jpegData(compressionQuality: 0.85){
-                if !FileManager.default.saveFile(data: data, url: url){
-                    Log.error("preview could not be saved at \(url)")
+                _ = FileManager.default.assertDirectoryFor(url: previewURL)
+                if !FileManager.default.saveFile(data: data, url: previewURL){
+                    Log.error("preview could not be saved at \(previewURL)")
                 }
             }
             return preview
