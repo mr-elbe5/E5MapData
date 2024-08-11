@@ -7,7 +7,7 @@
 import CoreLocation
 import E5Data
 
-open class Trackpoint: Codable, Identifiable{
+open class Trackpoint: Codable, Identifiable, Selectable{
     
     enum CodingKeys: String, CodingKey{
         case latitude
@@ -20,12 +20,15 @@ open class Trackpoint: Codable, Identifiable{
     public var altitude: Double
     public var timestamp: Date
     public var mapPoint: CGPoint
+    //runtime
+    public var selected: Bool = false
     
     // for gpx parser
     public init(coordinate: CLLocationCoordinate2D, altitude: CLLocationDistance, timestamp: Date){
         self.coordinate = coordinate
         self.altitude = altitude
         self.timestamp = timestamp
+        selected = false
         mapPoint = CGPoint(coordinate)
     }
     
@@ -35,6 +38,7 @@ open class Trackpoint: Codable, Identifiable{
         coordinate = location.coordinate
         altitude = location.altitude
         timestamp = location.timestamp.toLocalDate()
+        selected = false
     }
     
     required public init?(coder: NSCoder) {
