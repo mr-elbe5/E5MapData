@@ -9,19 +9,24 @@ import CoreLocation
 
 public struct World{
     
-    public static let maxZoom : Int = 18
+    public static var maxZoom : Int = 18
     public static var minZoom : Int = 4
     public static let tileExtent : Double = 256.0
     public static let tileSize : CGSize = CGSize(width: tileExtent, height: tileExtent)
-    public static let fullExtent : Double = pow(2,Double(maxZoom))*tileExtent
+    public static var fullExtent = pow(2,Double(maxZoom))*tileExtent
     public static let equatorInMeters : CGFloat = 40075016.686
-    public static let worldSize = CGSize(width: fullExtent, height: fullExtent)
-    public static let mapSize = CGSize(width: fullExtent, height: fullExtent)
-    
-    public static let mapRect = CGRect(origin: CGPoint(x: 0, y: 0), size: mapSize)
-    
+    public static var worldSize = CGSize(width: fullExtent, height: fullExtent)
+    public static var worldRect = CGRect(origin: CGPoint(x: 0, y: 0), size: worldSize)
     public static var scrollWidthFactor : CGFloat = 3
     public static var scrollableWorldSize = CGSize(width: scrollWidthFactor*fullExtent, height: fullExtent)
+    
+    public static func setMaxZoom(_ maxZoom: Int){
+        World.maxZoom = maxZoom
+        World.fullExtent = pow(2,Double(World.maxZoom))*tileExtent
+        World.worldSize = CGSize(width: World.fullExtent, height: World.fullExtent)
+        World.worldRect = CGRect(origin: CGPoint(x: 0, y: 0), size: World.worldSize)
+        World.scrollableWorldSize = CGSize(width: World.scrollWidthFactor*World.fullExtent, height: World.fullExtent)
+    }
     
     public static func zoomScale(at zoom: Int) -> Double{
         pow(2.0, CGFloat(zoom))
@@ -115,12 +120,12 @@ public struct World{
         mapPoint(scaledX: scaledPoint.x, scaledY: scaledPoint.y, downScale: downScale)
     }
     
-    public static func mapRect(scaledX : Double, scaledY : Double, scaledWidth: Double, scaledHeight: Double, downScale: Double) -> CGRect{
+    public static func worldRect(scaledX : Double, scaledY : Double, scaledWidth: Double, scaledHeight: Double, downScale: Double) -> CGRect{
         CGRect(origin: CGPoint(x: scaledX / downScale, y: scaledY / downScale), size: CGSize(width: scaledWidth/downScale, height: scaledHeight/downScale))
     }
     
-    public static func mapRect(scaledRect: CGRect, downScale: Double) -> CGRect{
-        mapRect(scaledX: scaledRect.origin.x, scaledY: scaledRect.origin.y, scaledWidth: scaledRect.size.width, scaledHeight: scaledRect.size.height, downScale: downScale)
+    public static func worldRect(scaledRect: CGRect, downScale: Double) -> CGRect{
+        worldRect(scaledX: scaledRect.origin.x, scaledY: scaledRect.origin.y, scaledWidth: scaledRect.size.width, scaledHeight: scaledRect.size.height, downScale: downScale)
     }
     
     public static func coordinate(scaledX : Double, scaledY : Double, downScale: Double) -> CLLocationCoordinate2D {
@@ -140,8 +145,8 @@ public struct World{
         round(projectedLatitude(latitude) * fullExtent * downScale)
     }
     
-    public static func getZoomToFit(mapRect: CGRect, scaledSize: CGSize) -> Int{
-        let scaleDiff = min(scaledSize.width/mapRect.size.width, scaledSize.height/mapRect.size.height)
+    public static func getZoomToFit(worldRect: CGRect, scaledSize: CGSize) -> Int{
+        let scaleDiff = min(scaledSize.width/worldRect.size.width, scaledSize.height/worldRect.size.height)
         return World.maxZoom + min(0, zoomLevelFromScale(scale: scaleDiff))
     }
     

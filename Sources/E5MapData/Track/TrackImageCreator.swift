@@ -27,12 +27,12 @@ open class TrackImageCreator{
             return nil
         }
         let boundingTrackRect = track.trackpoints.boundingMapRect!
-        let zoom = World.getZoomToFit(mapRect: boundingTrackRect, scaledSize: size)
+        let zoom = World.getZoomToFit(worldRect: boundingTrackRect, scaledSize: size)
         let downScale = World.zoomScale(from: World.maxZoom, to: zoom)
         let centerCoordinate = boundingTrackRect.centerCoordinate
         let centerPoint = CGPoint(x: World.scaledX(centerCoordinate.longitude, downScale: downScale), y: World.scaledY(centerCoordinate.latitude, downScale: downScale))
         let scaledWorldViewRect = CGRect(x: centerPoint.x - size.width/2, y: centerPoint.y - size.height/2, width: size.width, height: size.height)
-        let worldViewRect = World.mapRect(scaledRect: scaledWorldViewRect, downScale: downScale)
+        let worldViewRect = World.worldRect(scaledRect: scaledWorldViewRect, downScale: downScale)
         if worldViewRect.isEmpty{
             return nil
         }
@@ -77,12 +77,12 @@ open class TrackImageCreator{
             return nil
         }
         let boundingTrackRect = track.trackpoints.boundingMapRect!
-        let zoom = World.getZoomToFit(mapRect: boundingTrackRect, scaledSize: size)
+        let zoom = World.getZoomToFit(worldRect: boundingTrackRect, scaledSize: size)
         let downScale = World.zoomScale(from: World.maxZoom, to: zoom)
         let centerCoordinate = boundingTrackRect.centerCoordinate
         let centerPoint = CGPoint(x: World.scaledX(centerCoordinate.longitude, downScale: downScale), y: World.scaledY(centerCoordinate.latitude, downScale: downScale))
         let scaledWorldViewRect = CGRect(x: centerPoint.x - size.width/2, y: centerPoint.y - size.height/2, width: size.width, height: size.height)
-        let worldViewRect = World.mapRect(scaledRect: scaledWorldViewRect, downScale: downScale)
+        let worldViewRect = World.worldRect(scaledRect: scaledWorldViewRect, downScale: downScale)
         if worldViewRect.isEmpty{
             return nil
         }
