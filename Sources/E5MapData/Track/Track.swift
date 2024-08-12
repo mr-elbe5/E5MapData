@@ -128,32 +128,37 @@ open class Track : LocatedItem{
         }
     }
     
-    public func evaluateImportedTrackpoints(){
-        distance = 0
-        upDistance = 0
-        downDistance = 0
-        if let time = trackpoints.first?.timestamp{
-            startTime = time
+    public func setTrackpoints(_ trackpoints: TrackpointList){
+        if !trackpoints.isEmpty{
+            self.trackpoints = trackpoints
+            updateFromTrackpoints()
         }
-        if let time = trackpoints.last?.timestamp{
-            endTime = time
-        }
-        var last : Trackpoint? = nil
-        for tp in trackpoints{
-            if let last = last{
-                distance += last.coordinate.distance(to: tp.coordinate)
-                let vDist = tp.altitude - last.altitude
-                if vDist > 0{
-                    upDistance += vDist
+    }
+    
+    public func updateFromTrackpoints(){
+        if !trackpoints.isEmpty{
+            startTime = trackpoints.first!.timestamp
+            endTime = trackpoints.last!.timestamp
+            creationDate = startTime
+            distance = 0
+            upDistance = 0
+            downDistance = 0
+            var last : Trackpoint? = nil
+            for tp in trackpoints{
+                if let last = last{
+                    distance += last.coordinate.distance(to: tp.coordinate)
+                    let vDist = tp.altitude - last.altitude
+                    if vDist > 0{
+                        upDistance += vDist
+                    }
+                    else{
+                        //invert negative
+                        downDistance -= vDist
+                    }
                 }
-                else{
-                    //invert negative
-                    downDistance -= vDist
-                }
+                last = tp
             }
-            last = tp
         }
-        simplifyTrack()
     }
     
     public func addTrackpoint(from location: CLLocation){
