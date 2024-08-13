@@ -267,6 +267,14 @@ open class Track : LocatedItem{
         }
     }
     
+    override public func prepareDelete(){
+        if FileManager.default.fileExists(dirPath: FileManager.previewsDirURL.path, fileName: fileName){
+            if !FileManager.default.deleteFile(dirURL: FileManager.previewsDirURL, fileName: fileName){
+                Log.error("TrackItem could not delete preview: \(fileName)")
+            }
+        }
+    }
+    
 #if os(macOS)
     public func getPreview() -> NSImage?{
         if let data = getPreviewFile(){

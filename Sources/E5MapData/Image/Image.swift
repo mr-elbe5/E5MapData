@@ -54,6 +54,15 @@ open class Image : FileItem{
         return FileManager.default.readFile(url: url)
     }
     
+    override public func prepareDelete(){
+        super.prepareDelete()
+        if FileManager.default.fileExists(dirPath: FileManager.previewsDirURL.path, fileName: fileName){
+            if !FileManager.default.deleteFile(dirURL: FileManager.previewsDirURL, fileName: fileName){
+                Log.error("FileItem could not delete preview: \(fileName)")
+            }
+        }
+    }
+    
 #if os(macOS)
     public func getImage() -> NSImage?{
         if let data = getFile(){
