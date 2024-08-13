@@ -199,6 +199,29 @@ open class Track : LocatedItem{
         endTime = tp.timestamp
     }
     
+    public func setMinimalTrackpointDistances(minDistance: CGFloat){
+        if !trackpoints.isEmpty{
+            var removables = Array<Trackpoint>()
+            var last : Trackpoint = trackpoints.first!
+            for idx in 1..<trackpoints.count - 1{
+                let tp = trackpoints[idx]
+                let distance = last.coordinate.distance(to: tp.coordinate)
+                if distance < minDistance{
+                    removables.append(tp)
+                }
+                else{
+                    last = tp
+                }
+            }
+            trackpoints.removeAll(where: { tp1 in
+                removables.contains(where: { tp2 in
+                    tp1.id == tp2.id
+                })
+            })
+        }
+        updateFromTrackpoints()
+    }
+    
     public func simplifyTrack(){
         Log.info("simplifying track starting with \(trackpoints.count) trackpoints")
         Log.info("using max deviation of \(Preferences.shared.maxTrackpointInLineDeviation) m")
