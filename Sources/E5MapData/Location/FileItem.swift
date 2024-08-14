@@ -15,9 +15,10 @@ open class FileItem : LocatedItem{
     private enum CodingKeys: CodingKey{
         case fileName
         case title
+        case comment
     }
     
-    public var title: String
+    public var comment: String
     public var fileName : String
     
     public var filePath : String{
@@ -53,14 +54,14 @@ open class FileItem : LocatedItem{
     
     override public init(){
         fileName = ""
-        title = ""
+        comment = ""
         super.init()
     }
     
     required public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         fileName = try values.decode(String.self, forKey: .fileName)
-        title = try values.decodeIfPresent(String.self, forKey: .title) ?? ""
+        comment = try values.decodeIfPresent(String.self, forKeys: [.title, .comment]) ?? ""
         try super.init(from: decoder)
     }
     
@@ -68,7 +69,7 @@ open class FileItem : LocatedItem{
         try super.encode(to: encoder)
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(fileName, forKey: .fileName)
-        try container.encode(title, forKey: .title)
+        try container.encode(comment, forKey: .comment)
     }
     
     open func setFileNameFromURL(_ url: URL){
